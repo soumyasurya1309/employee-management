@@ -10,17 +10,25 @@ class AuthProvider extends ChangeNotifier {
   AuthStatus _status = AuthStatus.initial;
   String? _errorMessage;
   User? _user;
+  String _role = 'user';
 
   AuthStatus get status => _status;
   String? get errorMessage => _errorMessage;
   User? get user => _user;
   bool get isAuthenticated => _user != null;
+  bool get isAdmin => _role == 'admin';
+  String get role => _role;
 
   AuthProvider() {
-    _authService.authStateChanges.listen((user) {
+    _authService.authStateChanges.listen((user) async {
       _user = user;
-      _status =
-          user != null ? AuthStatus.authenticated : AuthStatus.unauthenticated;
+      if (user != null) {
+        _role = await _authService.getUserRole(user.uid);
+        _status = AuthStatus.authenticated;
+      } else {
+        _role = 'user';
+        _status = AuthStatus.unauthenticated;
+      }
       notifyListeners();
     });
   }
@@ -30,7 +38,9 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
     try {
-      await _authService.signInWithEmail(email: email, password: password);
+      final credential = await _authService.signInWithEmail(
+          email: email, password: password);
+      _role = await _authService.getUserRole(credential.user!.uid);
       _status = AuthStatus.authenticated;
       notifyListeners();
       return true;
@@ -53,6 +63,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _authService.registerWithEmail(email: email, password: password);
+      _role = 'user';
       _status = AuthStatus.authenticated;
       notifyListeners();
       return true;
@@ -89,6 +100,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> signOut() async {
     await _authService.signOut();
     _user = null;
+    _role = 'user';
     _status = AuthStatus.unauthenticated;
     notifyListeners();
   }

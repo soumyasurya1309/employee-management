@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/employee.dart';
+import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
 import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
@@ -12,12 +13,13 @@ class EmployeeDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final employee = ModalRoute.of(context)!.settings.arguments as Employee;
+    final isAdmin = context.watch<AuthProvider>().isAdmin;
 
     return Scaffold(
       backgroundColor: AppTheme.surfaceColor,
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(context, employee),
+          _buildAppBar(context, employee, isAdmin),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -29,7 +31,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   _buildJobCard(employee),
                   const SizedBox(height: 16),
-                  _buildActionButtons(context, employee),
+                  if (isAdmin) _buildActionButtons(context, employee),
                   const SizedBox(height: 24),
                 ],
               ),
@@ -40,7 +42,8 @@ class EmployeeDetailScreen extends StatelessWidget {
     );
   }
 
-  SliverAppBar _buildAppBar(BuildContext context, Employee employee) {
+  SliverAppBar _buildAppBar(
+      BuildContext context, Employee employee, bool isAdmin) {
     return SliverAppBar(
       expandedHeight: 220,
       pinned: true,
@@ -58,8 +61,7 @@ class EmployeeDetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              AvatarInitials(
-                  name: employee.name, radius: 44, fontSize: 28),
+              AvatarInitials(name: employee.name, radius: 44, fontSize: 28),
               const SizedBox(height: 12),
               Text(
                 employee.name,
@@ -82,14 +84,15 @@ class EmployeeDetailScreen extends StatelessWidget {
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.edit_outlined, color: Colors.white),
-          onPressed: () => Navigator.pushNamed(
-            context,
-            '/employees/edit',
-            arguments: employee,
+        if (isAdmin)
+          IconButton(
+            icon: const Icon(Icons.edit_outlined, color: Colors.white),
+            onPressed: () => Navigator.pushNamed(
+              context,
+              '/employees/edit',
+              arguments: employee,
+            ),
           ),
-        ),
       ],
     );
   }

@@ -51,7 +51,6 @@ class EmployeeManagementApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
-        '/otp-demo': (context) => const OtpDemoScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/employees': (context) => const EmployeeListScreen(),
         '/employees/add': (context) => const AddEditEmployeeScreen(),

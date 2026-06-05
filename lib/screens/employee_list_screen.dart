@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import '../models/employee.dart';
+import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
 import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
@@ -23,6 +24,17 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   }
 
   Future<void> _confirmDelete(Employee employee) async {
+    final isAdmin = context.read<AuthProvider>().isAdmin;
+    if (!isAdmin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Only admins can delete employees.'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -61,23 +73,38 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = context.watch<AuthProvider>().isAdmin;
+
     return Consumer<EmployeeProvider>(
       builder: (context, provider, _) {
         return Scaffold(
           backgroundColor: AppTheme.surfaceColor,
           appBar: AppBar(
             title: Text('Employees (${provider.totalCount})'),
+            actions: [
+              if (isAdmin)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Chip(
+                    label: const Text('Admin',
+                        style: TextStyle(
+                            color: Colors.white, fontSize: 12)),
+                    backgroundColor: AppTheme.secondaryColor,
+                  ),
+                ),
+            ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () =>
-                Navigator.pushNamed(context, '/employees/add'),
-            backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
-            child: const Icon(Icons.person_add_alt_1_rounded),
-          ),
+          floatingActionButton: isAdmin
+              ? FloatingActionButton(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/employees/add'),
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  child: const Icon(Icons.person_add_alt_1_rounded),
+                )
+              : null,
           body: Column(
             children: [
-              // Search bar
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -100,9 +127,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                   ),
                 ),
               ),
-
               Expanded(
-                child: _buildBody(provider),
+                child: _buildBody(provider, isAdmin),
               ),
             ],
           ),
@@ -111,7 +137,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     );
   }
 
-  Widget _buildBody(EmployeeProvider provider) {
+  Widget _buildBody(EmployeeProvider provider, bool isAdmin) {
     if (provider.status == EmployeeStatus.loading &&
         provider.allEmployees.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -143,8 +169,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
             : 'Add your first employee to get started',
         icon: Icons.people_alt_outlined,
         buttonLabel:
-            provider.searchQuery.isEmpty ? 'Add Employee' : null,
-        onButtonPressed: provider.searchQuery.isEmpty
+            provider.searchQuery.isEmpty && isAdmin ? 'Add Employee' : null,
+        onButtonPressed: provider.searchQuery.isEmpty && isAdmin
             ? () => Navigator.pushNamed(context, '/employees/add')
             : null,
       );
@@ -153,51 +179,56 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
       itemCount: employees.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final employee = employees[index];
         return Slidable(
           key: ValueKey(employee.id),
-          endActionPane: ActionPane(
-            motion: const DrawerMotion(),
-            children: [
-              SlidableAction(
-                onPressed: (_) => Navigator.pushNamed(
-                  context,
-                  '/employees/edit',
-                  arguments: employee,
-                ),
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-                icon: Icons.edit_outlined,
-                label: 'Edit',
-                borderRadius: const BorderRadius.horizontal(
-                    left: Radius.circular(12)),
-              ),
-              SlidableAction(
-                onPressed: (_) => _confirmDelete(employee),
-                backgroundColor: AppTheme.errorColor,
-                foregroundColor: Colors.white,
-                icon: Icons.delete_outline,
-                label: 'Delete',
-                borderRadius: const BorderRadius.horizontal(
-                    right: Radius.circular(12)),
-              ),
-            ],
-          ),
+          endActionPane: isAdmin
+              ? ActionPane(
+                  motion: const DrawerMotion(),
+                  children: [
+                    SlidableAction(
+                      onPressed: (_) => Navigator.pushNamed(
+                        context,
+                        '/employees/edit',
+                        arguments: employee,
+                      ),
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      icon: Icons.edit_outlined,
+                      label: 'Edit',
+                      borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(12)),
+                    ),
+                    SlidableAction(
+                      onPressed: (_) => _confirmDelete(employee),
+                      backgroundColor: AppTheme.errorColor,
+                      foregroundColor: Colors.white,
+                      icon: Icons.delete_outline,
+                      label: 'Delete',
+                      borderRadius: const BorderRadius.horizontal(
+                          right: Radius.circular(12)),
+                    ),
+                  ],
+                )
+              : null,
           child: _EmployeeCard(
             employee: employee,
+            isAdmin: isAdmin,
             onTap: () => Navigator.pushNamed(
               context,
               '/employees/detail',
               arguments: employee,
             ),
-            onEdit: () => Navigator.pushNamed(
-              context,
-              '/employees/edit',
-              arguments: employee,
-            ),
-            onDelete: () => _confirmDelete(employee),
+            onEdit: isAdmin
+                ? () => Navigator.pushNamed(
+                      context,
+                      '/employees/edit',
+                      arguments: employee,
+                    )
+                : null,
+            onDelete: isAdmin ? () => _confirmDelete(employee) : null,
           ),
         );
       },
@@ -207,15 +238,17 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
 
 class _EmployeeCard extends StatelessWidget {
   final Employee employee;
+  final bool isAdmin;
   final VoidCallback onTap;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const _EmployeeCard({
     required this.employee,
+    required this.isAdmin,
     required this.onTap,
-    required this.onEdit,
-    required this.onDelete,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override

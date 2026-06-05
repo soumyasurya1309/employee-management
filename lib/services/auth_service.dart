@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
   User? get currentUser => _auth.currentUser;
@@ -20,10 +22,29 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _auth.createUserWithEmailAndPassword(
+    final credential = await _auth.createUserWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
+    // Save user role to Firestore — default is 'user'
+    await _firestore.collection('users').doc(credential.user!.uid).set({
+      'email': email.trim(),
+      'role': 'user',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    return credential;
+  }
+
+  Future<String> getUserRole(String uid) async {
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      if (doc.exists) {
+        return doc.data()?['role'] ?? 'user';
+      }
+      return 'user';
+    } catch (_) {
+      return 'user';
+    }
   }
 
   Future<void> sendPasswordResetEmail(String email) async {

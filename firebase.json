@@ -1,1 +1,36 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"emp-management-40a60","appId":"1:552723751219:android:0598b2aa4e71c37c801e46","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"emp-management-40a60","configurations":{"android":"1:552723751219:android:0598b2aa4e71c37c801e46","web":"1:552723751219:web:967c6408efacfac1801e46"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "emp-management-40a60",
+          "appId": "1:552723751219:android:0598b2aa4e71c37c801e46",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "emp-management-40a60",
+          "configurations": {
+            "android": "1:552723751219:android:0598b2aa4e71c37c801e46",
+            "web": "1:552723751219:web:967c6408efacfac1801e46"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
