@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only authenticated users can access employee data
+    match /employees/{employeeId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasAll([
+                         'name', 'employeeId', 'email', 'phone',
+                         'department', 'designation', 'salary',
+                         'joiningDate', 'address', 'createdAt'
+                       ]);
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+
+    // Block all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
