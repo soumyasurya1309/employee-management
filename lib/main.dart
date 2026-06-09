@@ -45,6 +45,7 @@ class EmployeeManagementApp extends StatelessWidget {
       title: 'EmpManager',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      scaffoldMessengerKey: NotificationService.messengerKey,
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
