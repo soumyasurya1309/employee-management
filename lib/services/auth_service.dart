@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
   User? get currentUser => _auth.currentUser;
@@ -12,10 +14,12 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _auth.signInWithEmailAndPassword(
+    final credential = await _auth.signInWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
+    await saveFcmToken(credential.user!.uid);
+    return credential;
   }
 
   Future<UserCredential> registerWithEmail({
@@ -26,13 +30,42 @@ class AuthService {
       email: email.trim(),
       password: password,
     );
-    // Save user role to Firestore — default is 'user'
     await _firestore.collection('users').doc(credential.user!.uid).set({
       'email': email.trim(),
       'role': 'user',
       'createdAt': FieldValue.serverTimestamp(),
     });
+    await saveFcmToken(credential.user!.uid);
     return credential;
+  }
+
+  Future<void> saveFcmToken(String uid) async {
+    try {
+      final token = await _fcm.getToken();
+      if (token != null) {
+        await _firestore.collection('users').doc(uid).update({
+          'fcmTokens': FieldValue.arrayUnion([token]),
+          'lastSeen': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<List<String>> getAllFcmTokens() async {
+    try {
+      final snapshot = await _firestore.collection('users').get();
+      final tokens = <String>[];
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final fcmTokens = data['fcmTokens'];
+        if (fcmTokens != null && fcmTokens is List) {
+          tokens.addAll(fcmTokens.cast<String>());
+        }
+      }
+      return tokens;
+    } catch (_) {
+      return [];
+    }
   }
 
   Future<String> getUserRole(String uid) async {
