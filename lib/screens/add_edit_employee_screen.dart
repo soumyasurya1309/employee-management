@@ -49,8 +49,7 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
     _salaryController.text = e.salary.toString();
     _addressController.text = e.address;
     _joiningDate = e.joiningDate;
-    _joiningDateController.text =
-        DateFormat('dd/MM/yyyy').format(e.joiningDate);
+    _joiningDateController.text = DateFormat('dd/MM/yyyy').format(e.joiningDate);
     _selectedDepartment = e.department;
     _selectedDesignation = e.designation;
   }
@@ -73,12 +72,20 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
       initialDate: _joiningDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      builder: (context, child) => Theme(
+        data: ThemeData.dark().copyWith(
+          colorScheme: const ColorScheme.dark(
+            primary: DarkColors.accent,
+            surface: DarkColors.surface,
+          ),
+        ),
+        child: child!,
+      ),
     );
     if (picked != null) {
       setState(() {
         _joiningDate = picked;
-        _joiningDateController.text =
-            DateFormat('dd/MM/yyyy').format(picked);
+        _joiningDateController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
@@ -86,15 +93,12 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (_joiningDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select the joining date'),
-          backgroundColor: AppTheme.errorColor,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please select the joining date'),
+        backgroundColor: Color(0xFFF87171),
+      ));
       return;
     }
-
     final provider = context.read<EmployeeProvider>();
     final employee = Employee(
       id: _existingEmployee?.id ?? '',
@@ -119,22 +123,22 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
 
     if (!mounted) return;
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_isEdit
-              ? '${employee.name} updated successfully'
-              : '${employee.name} added successfully'),
-          backgroundColor: AppTheme.secondaryColor,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(_isEdit
+            ? '${employee.name} updated'
+            : '${employee.name} added'),
+        backgroundColor: const Color(0xFF34D399),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ));
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(provider.errorMessage ?? 'Operation failed'),
-          backgroundColor: AppTheme.errorColor,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(provider.errorMessage ?? 'Operation failed'),
+        backgroundColor: const Color(0xFFF87171),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ));
       provider.clearError();
     }
   }
@@ -146,66 +150,72 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
         return LoadingOverlay(
           isLoading: provider.status == EmployeeStatus.loading,
           child: Scaffold(
-            backgroundColor: AppTheme.surfaceColor,
+            backgroundColor: DarkColors.bg,
             appBar: AppBar(
-              title: Text(_isEdit ? 'Edit Employee' : 'Add Employee'),
+              backgroundColor: DarkColors.bg,
+              elevation: 0,
+              iconTheme: const IconThemeData(color: DarkColors.textSecondary),
+              title: Text(_isEdit ? 'Edit employee' : 'Add employee',
+                  style: const TextStyle(
+                      color: DarkColors.textPrimary,
+                      fontSize: 17, fontWeight: FontWeight.w500)),
             ),
             body: Form(
               key: _formKey,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _sectionCard(
-                      title: 'Personal Information',
-                      icon: Icons.person_outline,
+                    _Section(
+                      title: 'PERSONAL INFO',
+                      icon: Icons.person_outline_rounded,
                       children: [
                         AppTextField(
-                          label: 'Full Name',
+                          label: 'Full name',
                           hint: 'John Doe',
                           controller: _nameController,
-                          prefixIcon: const Icon(Icons.person_outline),
-                          validator: (v) =>
-                              AppValidators.validateRequired(v, 'Name'),
+                          prefixIcon: const Icon(Icons.person_outline_rounded),
+                          validator: (v) => v == null || v.trim().isEmpty
+                              ? 'Required' : null,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         AppTextField(
                           label: 'Employee ID',
                           hint: 'EMP001',
                           controller: _employeeIdController,
                           prefixIcon: const Icon(Icons.badge_outlined),
-                          validator: (v) =>
-                              AppValidators.validateRequired(v, 'Employee ID'),
+                          validator: (v) => v == null || v.trim().isEmpty
+                              ? 'Required' : null,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         AppTextField(
                           label: 'Address',
-                          hint: '123 Main St, City, Country',
+                          hint: '123 Main St, City',
                           controller: _addressController,
                           prefixIcon: const Icon(Icons.location_on_outlined),
                           maxLines: 2,
-                          validator: (v) =>
-                              AppValidators.validateRequired(v, 'Address'),
+                          validator: (v) => v == null || v.trim().isEmpty
+                              ? 'Required' : null,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    _sectionCard(
-                      title: 'Contact Information',
-                      icon: Icons.contact_mail_outlined,
+                    const SizedBox(height: 10),
+                    _Section(
+                      title: 'CONTACT INFO',
+                      icon: Icons.mail_outline_rounded,
                       children: [
                         AppTextField(
-                          label: 'Email Address',
+                          label: 'Email address',
                           hint: 'john@company.com',
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          prefixIcon: const Icon(Icons.email_outlined),
+                          prefixIcon: const Icon(Icons.mail_outline_rounded),
                           validator: AppValidators.validateEmail,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         AppTextField(
-                          label: 'Phone Number',
+                          label: 'Phone number',
                           hint: '10-digit number',
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
@@ -214,70 +224,65 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    _sectionCard(
-                      title: 'Job Information',
+                    const SizedBox(height: 10),
+                    _Section(
+                      title: 'JOB INFO',
                       icon: Icons.work_outline_rounded,
                       children: [
-                        _dropdownField(
+                        _DarkDropdown(
                           label: 'Department',
                           value: _selectedDepartment,
                           items: AppConstants.departments,
                           icon: Icons.business_outlined,
                           onChanged: (v) =>
                               setState(() => _selectedDepartment = v),
-                          validator: (v) => v == null
-                              ? 'Please select a department'
-                              : null,
+                          validator: (v) =>
+                              v == null ? 'Select department' : null,
                         ),
-                        const SizedBox(height: 16),
-                        _dropdownField(
+                        const SizedBox(height: 12),
+                        _DarkDropdown(
                           label: 'Designation',
                           value: _selectedDesignation,
                           items: AppConstants.designations,
                           icon: Icons.work_history_outlined,
                           onChanged: (v) =>
                               setState(() => _selectedDesignation = v),
-                          validator: (v) => v == null
-                              ? 'Please select a designation'
-                              : null,
+                          validator: (v) =>
+                              v == null ? 'Select designation' : null,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         AppTextField(
                           label: 'Salary (USD)',
                           hint: '50000',
                           controller: _salaryController,
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
-                          prefixIcon: const Icon(Icons.attach_money),
+                          prefixIcon: const Icon(Icons.attach_money_rounded),
                           validator: AppValidators.validateSalary,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         AppTextField(
-                          label: 'Joining Date',
+                          label: 'Joining date',
                           hint: 'Select date',
                           controller: _joiningDateController,
                           readOnly: true,
                           onTap: _pickDate,
-                          prefixIcon:
-                              const Icon(Icons.calendar_today_outlined),
-                          suffixIcon: const Icon(Icons.arrow_drop_down),
-                          validator: (v) =>
-                              AppValidators.validateRequired(v, 'Joining date'),
+                          prefixIcon: const Icon(Icons.calendar_today_outlined),
+                          suffixIcon: const Icon(Icons.arrow_drop_down,
+                              color: DarkColors.textMuted),
+                          validator: (v) => v == null || v.trim().isEmpty
+                              ? 'Select date' : null,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _save,
-                        icon: Icon(
-                            _isEdit ? Icons.save_outlined : Icons.person_add_alt_1),
-                        label: Text(_isEdit ? 'Save Changes' : 'Add Employee'),
-                      ),
+                    const SizedBox(height: 20),
+                    GradientButton(
+                      label: _isEdit ? 'Save changes' : 'Add employee',
+                      icon: _isEdit
+                          ? Icons.save_outlined
+                          : Icons.person_add_alt_1_rounded,
+                      onPressed: _save,
                     ),
-                    const SizedBox(height: 24),
                   ],
                 ),
               ),
@@ -287,60 +292,109 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
       },
     );
   }
+}
 
-  Widget _sectionCard({
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 20, color: AppTheme.primaryColor),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF212529),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...children,
-          ],
-        ),
+class _Section extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
+  const _Section(
+      {required this.title, required this.icon, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: DarkColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: DarkColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Icon(icon, size: 14, color: DarkColors.accent),
+            const SizedBox(width: 6),
+            Text(title,
+                style: const TextStyle(
+                    fontSize: 10, letterSpacing: 0.8,
+                    color: DarkColors.textMuted)),
+          ]),
+          const SizedBox(height: 2),
+          const Divider(color: DarkColors.border, height: 20),
+          ...children,
+        ],
       ),
     );
   }
+}
 
-  Widget _dropdownField({
-    required String label,
-    required String? value,
-    required List<String> items,
-    required IconData icon,
-    required void Function(String?) onChanged,
-    required String? Function(String?) validator,
-  }) {
-    return DropdownButtonFormField<String>(
-      initialValue: value,
-      onChanged: onChanged,
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon),
-      ),
-      isExpanded: true,
-      items: items
-          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
-          .toList(),
+class _DarkDropdown extends StatelessWidget {
+  final String label;
+  final String? value;
+  final List<String> items;
+  final IconData icon;
+  final void Function(String?) onChanged;
+  final String? Function(String?) validator;
+
+  const _DarkDropdown({
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.icon,
+    required this.onChanged,
+    required this.validator,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label.toUpperCase(),
+            style: const TextStyle(
+                fontSize: 10, letterSpacing: 0.8,
+                color: DarkColors.textMuted,
+                fontWeight: FontWeight.w500)),
+        const SizedBox(height: 6),
+        DropdownButtonFormField<String>(
+          initialValue: value,
+          onChanged: onChanged,
+          validator: validator,
+          dropdownColor: DarkColors.surface,
+          style: const TextStyle(color: DarkColors.textPrimary, fontSize: 14),
+          icon: const Icon(Icons.arrow_drop_down, color: DarkColors.textMuted),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: DarkColors.accent, size: 18),
+            filled: true,
+            fillColor: DarkColors.bg,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: DarkColors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: DarkColors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide:
+                  const BorderSide(color: DarkColors.accent, width: 1.5),
+            ),
+          ),
+          isExpanded: true,
+          items: items
+              .map((item) => DropdownMenuItem(
+                  value: item,
+                  child: Text(item,
+                      style: const TextStyle(
+                          color: DarkColors.textPrimary, fontSize: 13))))
+              .toList(),
+        ),
+      ],
     );
   }
 }

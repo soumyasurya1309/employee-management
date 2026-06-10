@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../models/employee.dart';
 import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
-import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
 
 class EmployeeDetailScreen extends StatelessWidget {
@@ -16,7 +15,7 @@ class EmployeeDetailScreen extends StatelessWidget {
     final isAdmin = context.watch<AuthProvider>().isAdmin;
 
     return Scaffold(
-      backgroundColor: AppTheme.surfaceColor,
+      backgroundColor: DarkColors.bg,
       body: CustomScrollView(
         slivers: [
           _buildAppBar(context, employee, isAdmin),
@@ -26,11 +25,11 @@ class EmployeeDetailScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _buildInfoCard(employee),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   _buildContactCard(employee),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   _buildJobCard(employee),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   if (isAdmin) _buildActionButtons(context, employee),
                   const SizedBox(height: 24),
                 ],
@@ -45,38 +44,35 @@ class EmployeeDetailScreen extends StatelessWidget {
   SliverAppBar _buildAppBar(
       BuildContext context, Employee employee, bool isAdmin) {
     return SliverAppBar(
-      expandedHeight: 220,
+      expandedHeight: 200,
       pinned: true,
-      backgroundColor: AppTheme.primaryColor,
+      backgroundColor: DarkColors.bg,
+      iconTheme: const IconThemeData(color: DarkColors.textSecondary),
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF1A73E8), Color(0xFF0D47A1)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: Color(0xFF13103A),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
-              AvatarInitials(name: employee.name, radius: 44, fontSize: 28),
+              const SizedBox(height: 48),
+              AvatarInitials(name: employee.name, radius: 38, fontSize: 24),
               const SizedBox(height: 12),
               Text(
                 employee.name,
                 style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
+                  color: DarkColors.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 '${employee.designation} • ${employee.department}',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.8),
-                  fontSize: 14,
+                style: const TextStyle(
+                  color: DarkColors.textSecondary,
+                  fontSize: 13,
                 ),
               ),
             ],
@@ -86,7 +82,8 @@ class EmployeeDetailScreen extends StatelessWidget {
       actions: [
         if (isAdmin)
           IconButton(
-            icon: const Icon(Icons.edit_outlined, color: Colors.white),
+            icon: const Icon(Icons.edit_outlined,
+                color: DarkColors.accent, size: 20),
             onPressed: () => Navigator.pushNamed(
               context,
               '/employees/edit',
@@ -98,122 +95,141 @@ class EmployeeDetailScreen extends StatelessWidget {
   }
 
   Widget _buildInfoCard(Employee employee) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader(Icons.badge_outlined, 'Employee Information'),
-            const SizedBox(height: 12),
-            _infoRow('Employee ID', employee.employeeId),
-            _divider(),
-            _infoRow('Joining Date',
-                DateFormat('MMMM dd, yyyy').format(employee.joiningDate)),
-            _divider(),
-            _infoRow('Salary', formatCurrency(employee.salary),
-                valueColor: AppTheme.secondaryColor),
-            _divider(),
-            _infoRow('Address', employee.address),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactCard(Employee employee) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader(Icons.contact_mail_outlined, 'Contact Details'),
-            const SizedBox(height: 12),
-            _infoRow('Email', employee.email),
-            _divider(),
-            _infoRow('Phone', employee.phone),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildJobCard(Employee employee) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader(Icons.work_outline_rounded, 'Job Details'),
-            const SizedBox(height: 12),
-            _infoRow('Department', employee.department),
-            _divider(),
-            _infoRow('Designation', employee.designation),
-            _divider(),
-            _infoRow(
-              'Member Since',
-              DateFormat('MMM yyyy').format(employee.createdAt),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButtons(BuildContext context, Employee employee) {
-    return Row(
+    return _Section(
+      title: 'EMPLOYEE INFO',
+      icon: Icons.badge_outlined,
       children: [
-        Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () => Navigator.pushNamed(
-              context,
-              '/employees/edit',
-              arguments: employee,
-            ),
-            icon: const Icon(Icons.edit_outlined),
-            label: const Text('Edit'),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () => _confirmDelete(context, employee),
-            icon: const Icon(Icons.delete_outline),
-            label: const Text('Delete'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.errorColor,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-          ),
-        ),
+        _InfoRow('Employee ID', employee.employeeId),
+        _InfoRow('Joining Date',
+            DateFormat('MMMM dd, yyyy').format(employee.joiningDate)),
+        _InfoRow('Salary', formatCurrency(employee.salary),
+            valueColor: const Color(0xFF34D399)),
+        _InfoRow('Address', employee.address, isLast: true),
       ],
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, Employee employee) async {
+  Widget _buildContactCard(Employee employee) {
+    return _Section(
+      title: 'CONTACT DETAILS',
+      icon: Icons.mail_outline_rounded,
+      children: [
+        _InfoRow('Email', employee.email),
+        _InfoRow('Phone', employee.phone, isLast: true),
+      ],
+    );
+  }
+
+  Widget _buildJobCard(Employee employee) {
+    return _Section(
+      title: 'JOB DETAILS',
+      icon: Icons.work_outline_rounded,
+      children: [
+        _InfoRow('Department', employee.department),
+        _InfoRow('Designation', employee.designation),
+        _InfoRow('Member Since',
+            DateFormat('MMM yyyy').format(employee.createdAt),
+            isLast: true),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, Employee employee) {
+    return Row(children: [
+      Expanded(
+        child: GestureDetector(
+          onTap: () => Navigator.pushNamed(
+            context,
+            '/employees/edit',
+            arguments: employee,
+          ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 13),
+            decoration: BoxDecoration(
+              color: DarkColors.surface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: DarkColors.border),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.edit_outlined,
+                    color: DarkColors.accent, size: 16),
+                SizedBox(width: 6),
+                Text('Edit',
+                    style: TextStyle(
+                        color: DarkColors.accent,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: GestureDetector(
+          onTap: () => _confirmDelete(context, employee),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 13),
+            decoration: BoxDecoration(
+              color: const Color(0xFF200A0A),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                  color: const Color(0xFFF87171).withValues(alpha: 0.3)),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.delete_outline,
+                    color: Color(0xFFF87171), size: 16),
+                SizedBox(width: 6),
+                Text('Delete',
+                    style: TextStyle(
+                        color: Color(0xFFF87171),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  Future<void> _confirmDelete(
+      BuildContext context, Employee employee) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Employee'),
-        content: Text('Delete ${employee.name}? This cannot be undone.'),
+        backgroundColor: DarkColors.surface,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Delete employee',
+            style: TextStyle(
+                color: DarkColors.textPrimary, fontSize: 16)),
+        content: Text('Remove ${employee.name}? This cannot be undone.',
+            style: const TextStyle(
+                color: DarkColors.textSecondary, fontSize: 13)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.errorColor),
-            child: const Text('Delete'),
+              child: const Text('Cancel',
+                  style:
+                      TextStyle(color: DarkColors.textSecondary))),
+          GestureDetector(
+            onTap: () => Navigator.pop(ctx, true),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF87171).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text('Delete',
+                  style: TextStyle(
+                      color: Color(0xFFF87171), fontSize: 13)),
+            ),
           ),
         ],
       ),
@@ -222,66 +238,97 @@ class EmployeeDetailScreen extends StatelessWidget {
       final provider = context.read<EmployeeProvider>();
       final success = await provider.deleteEmployee(employee);
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success
-              ? '${employee.name} deleted successfully'
-              : provider.errorMessage ?? 'Delete failed'),
-          backgroundColor:
-              success ? AppTheme.secondaryColor : AppTheme.errorColor,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(success
+            ? '${employee.name} removed'
+            : provider.errorMessage ?? 'Delete failed'),
+        backgroundColor: success
+            ? const Color(0xFF34D399)
+            : const Color(0xFFF87171),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)),
+      ));
       if (success) Navigator.pop(context);
       if (!success) provider.clearError();
     }
   }
+}
 
-  Widget _sectionHeader(IconData icon, String title) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppTheme.primaryColor),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF212529),
-          ),
-        ),
-      ],
-    );
-  }
+class _Section extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
+  const _Section(
+      {required this.title, required this.icon, required this.children});
 
-  Widget _infoRow(String label, String value, {Color? valueColor}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: DarkColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: DarkColors.border),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 110,
-            child: Text(
-              label,
-              style: const TextStyle(
-                  fontSize: 13, color: Color(0xFF6C757D)),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: valueColor ?? const Color(0xFF212529),
-              ),
-            ),
-          ),
+          Row(children: [
+            Icon(icon, size: 14, color: DarkColors.accent),
+            const SizedBox(width: 6),
+            Text(title,
+                style: const TextStyle(
+                    fontSize: 10,
+                    letterSpacing: 0.8,
+                    color: DarkColors.textMuted)),
+          ]),
+          const Divider(color: DarkColors.border, height: 20),
+          ...children,
         ],
       ),
     );
   }
+}
 
-  Widget _divider() =>
-      const Divider(height: 1, color: Color(0xFFF1F3F5));
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? valueColor;
+  final bool isLast;
+
+  const _InfoRow(this.label, this.value,
+      {this.valueColor, this.isLast = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 100,
+                child: Text(label,
+                    style: const TextStyle(
+                        fontSize: 12,
+                        color: DarkColors.textSecondary)),
+              ),
+              Expanded(
+                child: Text(value,
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: valueColor ?? DarkColors.textPrimary)),
+              ),
+            ],
+          ),
+        ),
+        if (!isLast)
+          const Divider(color: DarkColors.border, height: 1),
+      ],
+    );
+  }
 }

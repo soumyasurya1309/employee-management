@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../models/employee.dart';
 import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
-import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
 
 class EmployeeListScreen extends StatefulWidget {
@@ -26,30 +25,38 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   Future<void> _confirmDelete(Employee employee) async {
     final isAdmin = context.read<AuthProvider>().isAdmin;
     if (!isAdmin) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Only admins can delete employees.'),
-          backgroundColor: AppTheme.errorColor,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Only admins can delete employees.'),
+        backgroundColor: Color(0xFFF87171),
+      ));
       return;
     }
-
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Employee'),
-        content: Text(
-            'Are you sure you want to delete ${employee.name}? This action cannot be undone.'),
+        backgroundColor: DarkColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Delete employee',
+            style: TextStyle(color: DarkColors.textPrimary, fontSize: 16)),
+        content: Text('Remove ${employee.name}? This cannot be undone.',
+            style: const TextStyle(
+                color: DarkColors.textSecondary, fontSize: 13)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.errorColor),
-            child: const Text('Delete'),
+              child: const Text('Cancel',
+                  style: TextStyle(color: DarkColors.textSecondary))),
+          GestureDetector(
+            onTap: () => Navigator.pop(ctx, true),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF87171).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text('Delete',
+                  style: TextStyle(color: Color(0xFFF87171), fontSize: 13)),
+            ),
           ),
         ],
       ),
@@ -58,15 +65,17 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       final provider = context.read<EmployeeProvider>();
       final success = await provider.deleteEmployee(employee);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success
-              ? '${employee.name} deleted successfully'
-              : provider.errorMessage ?? 'Delete failed'),
-          backgroundColor:
-              success ? AppTheme.secondaryColor : AppTheme.errorColor,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(success
+            ? '${employee.name} removed'
+            : provider.errorMessage ?? 'Delete failed'),
+        backgroundColor: success
+            ? const Color(0xFF34D399)
+            : const Color(0xFFF87171),
+        behavior: SnackBarBehavior.floating,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ));
       if (!success) provider.clearError();
     }
   }
@@ -74,23 +83,31 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   @override
   Widget build(BuildContext context) {
     final isAdmin = context.watch<AuthProvider>().isAdmin;
-
     return Consumer<EmployeeProvider>(
       builder: (context, provider, _) {
         return Scaffold(
-          backgroundColor: AppTheme.surfaceColor,
+          backgroundColor: DarkColors.bg,
           appBar: AppBar(
-            title: Text('Employees (${provider.totalCount})'),
+            backgroundColor: DarkColors.bg,
+            elevation: 0,
+            title: Text('Employees (${provider.totalCount})',
+                style: const TextStyle(
+                    color: DarkColors.textPrimary,
+                    fontSize: 17, fontWeight: FontWeight.w500)),
             actions: [
               if (isAdmin)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Chip(
-                    label: const Text('Admin',
-                        style: TextStyle(
-                            color: Colors.white, fontSize: 12)),
-                    backgroundColor: AppTheme.secondaryColor,
+                Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0A2010),
+                    borderRadius: BorderRadius.circular(7),
+                    border: Border.all(color: const Color(0xFF34D399)),
                   ),
+                  child: const Text('Admin',
+                      style: TextStyle(
+                          color: Color(0xFF34D399), fontSize: 11)),
                 ),
             ],
           ),
@@ -98,40 +115,51 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
               ? FloatingActionButton(
                   onPressed: () =>
                       Navigator.pushNamed(context, '/employees/add'),
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
-                  child: const Icon(Icons.person_add_alt_1_rounded),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  backgroundColor: DarkColors.accent,
+                  child: const Icon(Icons.person_add_alt_1_rounded,
+                      color: Colors.white),
                 )
               : null,
-          body: Column(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          body: Column(children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: DarkColors.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: DarkColors.border),
+                ),
                 child: TextField(
                   controller: _searchController,
                   onChanged: provider.setSearchQuery,
+                  style: const TextStyle(
+                      color: DarkColors.textPrimary, fontSize: 13),
                   decoration: InputDecoration(
-                    hintText: 'Search by name, ID, email, department...',
-                    prefixIcon: const Icon(Icons.search),
+                    hintText: 'Search name, ID, department...',
+                    hintStyle: const TextStyle(
+                        color: DarkColors.textMuted, fontSize: 13),
+                    prefixIcon: const Icon(Icons.search,
+                        color: DarkColors.textMuted, size: 18),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: const Icon(Icons.clear,
+                                color: DarkColors.textMuted, size: 16),
                             onPressed: () {
                               _searchController.clear();
                               provider.clearSearch();
                             },
                           )
                         : null,
-                    fillColor: Colors.white,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 11),
                   ),
                 ),
               ),
-              Expanded(
-                child: _buildBody(provider, isAdmin),
-              ),
-            ],
-          ),
+            ),
+            Expanded(child: _buildBody(provider, isAdmin)),
+          ]),
         );
       },
     );
@@ -140,9 +168,9 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   Widget _buildBody(EmployeeProvider provider, bool isAdmin) {
     if (provider.status == EmployeeStatus.loading &&
         provider.allEmployees.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(color: DarkColors.accent));
     }
-
     if (provider.status == EmployeeStatus.error &&
         provider.allEmployees.isEmpty) {
       return EmptyState(
@@ -156,9 +184,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         },
       );
     }
-
     final employees = provider.employees;
-
     if (employees.isEmpty) {
       return EmptyState(
         title: provider.searchQuery.isNotEmpty
@@ -175,60 +201,52 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
             : null,
       );
     }
-
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
       itemCount: employees.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
-        final employee = employees[index];
-        return Slidable(
-          key: ValueKey(employee.id),
-          endActionPane: isAdmin
-              ? ActionPane(
-                  motion: const DrawerMotion(),
-                  children: [
-                    SlidableAction(
-                      onPressed: (_) => Navigator.pushNamed(
-                        context,
-                        '/employees/edit',
-                        arguments: employee,
+        final emp = employees[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Slidable(
+            key: ValueKey(emp.id),
+            endActionPane: isAdmin
+                ? ActionPane(
+                    motion: const DrawerMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (_) => Navigator.pushNamed(
+                            context, '/employees/edit',
+                            arguments: emp),
+                        backgroundColor: DarkColors.accent,
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit_outlined,
+                        label: 'Edit',
+                        borderRadius: const BorderRadius.horizontal(
+                            left: Radius.circular(12)),
                       ),
-                      backgroundColor: AppTheme.primaryColor,
-                      foregroundColor: Colors.white,
-                      icon: Icons.edit_outlined,
-                      label: 'Edit',
-                      borderRadius: const BorderRadius.horizontal(
-                          left: Radius.circular(12)),
-                    ),
-                    SlidableAction(
-                      onPressed: (_) => _confirmDelete(employee),
-                      backgroundColor: AppTheme.errorColor,
-                      foregroundColor: Colors.white,
-                      icon: Icons.delete_outline,
-                      label: 'Delete',
-                      borderRadius: const BorderRadius.horizontal(
-                          right: Radius.circular(12)),
-                    ),
-                  ],
-                )
-              : null,
-          child: _EmployeeCard(
-            employee: employee,
-            isAdmin: isAdmin,
-            onTap: () => Navigator.pushNamed(
-              context,
-              '/employees/detail',
-              arguments: employee,
-            ),
-            onEdit: isAdmin
-                ? () => Navigator.pushNamed(
-                      context,
-                      '/employees/edit',
-                      arguments: employee,
-                    )
+                      SlidableAction(
+                        onPressed: (_) => _confirmDelete(emp),
+                        backgroundColor: const Color(0xFFF87171),
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete_outline,
+                        label: 'Delete',
+                        borderRadius: const BorderRadius.horizontal(
+                            right: Radius.circular(12)),
+                      ),
+                    ],
+                  )
                 : null,
-            onDelete: isAdmin ? () => _confirmDelete(employee) : null,
+            child: _EmpCard(
+              employee: emp,
+              onTap: () => Navigator.pushNamed(context, '/employees/detail',
+                  arguments: emp),
+              onEdit: isAdmin
+                  ? () => Navigator.pushNamed(context, '/employees/edit',
+                      arguments: emp)
+                  : null,
+              onDelete: isAdmin ? () => _confirmDelete(emp) : null,
+            ),
           ),
         );
       },
@@ -236,16 +254,14 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   }
 }
 
-class _EmployeeCard extends StatelessWidget {
+class _EmpCard extends StatelessWidget {
   final Employee employee;
-  final bool isAdmin;
   final VoidCallback onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const _EmployeeCard({
+  const _EmpCard({
     required this.employee,
-    required this.isAdmin,
     required this.onTap,
     this.onEdit,
     this.onDelete,
@@ -253,70 +269,53 @@ class _EmployeeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.zero,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              AvatarInitials(name: employee.name, radius: 26, fontSize: 17),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            employee.name,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF212529),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          formatCurrency(employee.salary),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      employee.designation,
-                      style: const TextStyle(
-                          fontSize: 13, color: Color(0xFF6C757D)),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        DepartmentBadge(department: employee.department),
-                        const Spacer(),
-                        Text(
-                          'ID: ${employee.employeeId}',
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF6C757D)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right_rounded,
-                  color: Colors.grey.shade400),
-            ],
-          ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: DarkColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: DarkColors.border),
         ),
+        child: Row(children: [
+          AvatarInitials(name: employee.name, radius: 20, fontSize: 13),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Expanded(
+                    child: Text(employee.name,
+                        style: const TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w500,
+                            color: DarkColors.textPrimary)),
+                  ),
+                  Text(formatCurrency(employee.salary),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w600,
+                          color: DarkColors.accent)),
+                ]),
+                const SizedBox(height: 2),
+                Text(employee.designation,
+                    style: const TextStyle(
+                        fontSize: 11, color: DarkColors.textSecondary)),
+                const SizedBox(height: 6),
+                Row(children: [
+                  DepartmentBadge(department: employee.department),
+                  const Spacer(),
+                  Text('ID: ${employee.employeeId}',
+                      style: const TextStyle(
+                          fontSize: 10, color: DarkColors.textMuted)),
+                ]),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          const Icon(Icons.chevron_right_rounded,
+              color: DarkColors.border, size: 18),
+        ]),
       ),
     );
   }
