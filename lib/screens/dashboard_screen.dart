@@ -10,7 +10,6 @@ import 'payroll_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
-
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
@@ -67,8 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text('Sign out',
-                  style:
-                      TextStyle(color: Color(0xFFEF4444), fontSize: 13)),
+                  style: TextStyle(color: Color(0xFFEF4444), fontSize: 13)),
             ),
           ),
         ],
@@ -86,7 +84,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     return Consumer2<AuthProvider, EmployeeProvider>(
       builder: (context, auth, emp, _) {
         final isWide = MediaQuery.of(context).size.width > 700;
-
         return Scaffold(
           backgroundColor: AppColors.bg(context),
           appBar: AppBar(
@@ -98,10 +95,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
             actions: [
-              // ── Theme toggle ──
               ThemeToggleIconButton(
-                onToggle: () =>
-                    context.read<ThemeProvider>().toggle(),
+                onToggle: () => context.read<ThemeProvider>().toggle(),
               ),
               IconButton(
                 icon: Icon(Icons.notifications_outlined,
@@ -116,8 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () =>
-                Navigator.pushNamed(context, '/employees/add'),
+            onPressed: () => Navigator.pushNamed(context, '/employees/add'),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14)),
             backgroundColor: AppColors.accent,
@@ -161,8 +155,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                             Expanded(
                                 child: _KpiCard(
                               title: 'Departments',
-                              value:
-                                  emp.departmentCounts.length.toString(),
+                              value: emp.departmentCounts.length.toString(),
                               icon: Icons.business_rounded,
                               color: const Color(0xFF10B981),
                               onTap: () => Navigator.push(context,
@@ -206,8 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                               Expanded(
                                   child: _KpiCard(
                                 title: 'Departments',
-                                value: emp.departmentCounts.length
-                                    .toString(),
+                                value: emp.departmentCounts.length.toString(),
                                 icon: Icons.business_rounded,
                                 color: const Color(0xFF10B981),
                                 onTap: () => Navigator.push(
@@ -268,8 +260,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                             const SizedBox(height: 12),
                             const _QuickActionsCard(),
                           ]),
-                    const SizedBox(height: 12),
-                    const _RecentActivityCard(),
                   ],
                 ),
               ),
@@ -281,7 +271,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 }
 
-// ── Hero Card ─────────────────────────────────────────────────────────────────
+// ── Hero Card ────────────────────────────────────────────────────────────────
 class _HeroCard extends StatelessWidget {
   final String username;
   const _HeroCard({required this.username});
@@ -326,8 +316,7 @@ class _HeroCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 const Text(
                   'Manage your organization efficiently and monitor workforce insights.',
-                  style:
-                      TextStyle(fontSize: 12, color: Color(0xFFC7D2FE)),
+                  style: TextStyle(fontSize: 12, color: Color(0xFFC7D2FE)),
                 ),
               ],
             ),
@@ -339,8 +328,7 @@ class _HeroCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
             ),
             child: const Icon(Icons.person_rounded,
                 color: Colors.white, size: 28),
@@ -351,14 +339,13 @@ class _HeroCard extends StatelessWidget {
   }
 }
 
-// ── KPI Card ──────────────────────────────────────────────────────────────────
+// ── KPI Card ─────────────────────────────────────────────────────────────────
 class _KpiCard extends StatefulWidget {
   final String title;
   final String value;
   final IconData icon;
   final Color color;
   final VoidCallback? onTap;
-
   const _KpiCard({
     required this.title,
     required this.value,
@@ -430,8 +417,7 @@ class _KpiCardState extends State<_KpiCard> {
                   color: widget.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child:
-                    Icon(widget.icon, color: widget.color, size: 20),
+                child: Icon(widget.icon, color: widget.color, size: 20),
               ),
               const SizedBox(height: 14),
               Text(widget.value,
@@ -518,8 +504,7 @@ class _DeptPerformanceCard extends StatelessWidget {
             ),
             Text('This month',
                 style: TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textDisabled(context))),
+                    fontSize: 11, color: AppColors.textDisabled(context))),
           ]),
           const SizedBox(height: 20),
           if (deptCounts.isEmpty)
@@ -576,8 +561,7 @@ class _DeptRow extends StatelessWidget {
                       color: AppColors.textSecondary(context)))),
           Text('$count employees',
               style: TextStyle(
-                  fontSize: 11,
-                  color: AppColors.textDisabled(context))),
+                  fontSize: 11, color: AppColors.textDisabled(context))),
           const SizedBox(width: 8),
           Text('${(pct * 100).toStringAsFixed(0)}%',
               style: TextStyle(
@@ -638,8 +622,7 @@ class _QuickActionsCard extends StatelessWidget {
             label: 'Add Employee',
             color: const Color(0xFF8B5CF6),
             bg: const Color(0xFF7C3AED),
-            onTap: () =>
-                Navigator.pushNamed(context, '/employees/add'),
+            onTap: () => Navigator.pushNamed(context, '/employees/add'),
           ),
           const SizedBox(height: 8),
           _ActionBtn(
@@ -655,8 +638,8 @@ class _QuickActionsCard extends StatelessWidget {
             label: 'Department Stats',
             color: const Color(0xFF10B981),
             bg: const Color(0xFF10B981),
-            onTap: () => Navigator.push(context,
-                _SmoothRoute(page: const DepartmentsScreen())),
+            onTap: () => Navigator.push(
+                context, _SmoothRoute(page: const DepartmentsScreen())),
           ),
           const SizedBox(height: 8),
           _ActionBtn(
@@ -703,8 +686,7 @@ class _ActionBtnState extends State<_ActionBtn> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           width: double.infinity,
-          padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           decoration: BoxDecoration(
             color: _hovered
                 ? widget.bg.withValues(alpha: 0.2)
@@ -729,132 +711,6 @@ class _ActionBtnState extends State<_ActionBtn> {
                 color: widget.color.withValues(alpha: 0.5), size: 11),
           ]),
         ),
-      ),
-    );
-  }
-}
-
-// ── Recent Activity ───────────────────────────────────────────────────────────
-class _RecentActivityCard extends StatelessWidget {
-  const _RecentActivityCard();
-
-  static const _activities = [
-    {
-      'icon': Icons.person_add_alt_1_rounded,
-      'color': Color(0xFF8B5CF6),
-      'title': 'New employee added',
-      'time': '2 min ago',
-    },
-    {
-      'icon': Icons.edit_outlined,
-      'color': Color(0xFF3B82F6),
-      'title': 'Employee profile updated',
-      'time': '1 hour ago',
-    },
-    {
-      'icon': Icons.business_rounded,
-      'color': Color(0xFF10B981),
-      'title': 'Department created',
-      'time': '3 hours ago',
-    },
-    {
-      'icon': Icons.delete_outline,
-      'color': Color(0xFFEF4444),
-      'title': 'Employee record removed',
-      'time': 'Yesterday',
-    },
-    {
-      'icon': Icons.notifications_rounded,
-      'color': Color(0xFFF59E0B),
-      'title': 'Push notification sent',
-      'time': 'Yesterday',
-    },
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface(context),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border(context)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Recent Activity',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary(context))),
-                  const SizedBox(height: 2),
-                  Text('Latest actions in your system',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textDisabled(context))),
-                ],
-              ),
-            ),
-            Text('Last 24 hours',
-                style: TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textDisabled(context))),
-          ]),
-          const SizedBox(height: 16),
-          ..._activities.asMap().entries.map((entry) {
-            final i = entry.key;
-            final a = entry.value;
-            return Column(children: [
-              Row(children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color:
-                        (a['color'] as Color).withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(a['icon'] as IconData,
-                      color: a['color'] as Color, size: 17),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                    child: Text(a['title'] as String,
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textSecondary(context)))),
-                Text(a['time'] as String,
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textDisabled(context))),
-              ]),
-              if (i < _activities.length - 1)
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 18, top: 8, bottom: 8),
-                  child: Row(children: [
-                    Container(
-                        width: 1,
-                        height: 14,
-                        color: AppColors.border(context)),
-                  ]),
-                ),
-            ]);
-          }),
-        ],
       ),
     );
   }
