@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 
-
-// ── Dark theme colors ────────────────────────────────────────────────────────
 class DarkColors {
-  static const bg = Color(0xFF0F0F1A);
-  static const surface = Color(0xFF161625);
-  static const border = Color(0xFF252538);
-  static const accent = Color(0xFF6C63FF);
-  static const accentEnd = Color(0xFF4FACFE);
+  static const bg = Color(0xFF0B1020);
+  static const surface = Color(0xFF161D35);
+  static const elevated = Color(0xFF1C2545);
+  static const border = Color(0x14FFFFFF);
+  static const accent = Color(0xFF7C3AED);
+  static const accentLight = Color(0xFF8B5CF6);
+  static const accentEnd = Color(0xFF3B82F6);
   static const textPrimary = Color(0xFFFFFFFF);
-  static const textSecondary = Color(0xFF888899);
-  static const textMuted = Color(0xFF444455);
+  static const textSecondary = Color(0xFFD1D5DB);
+  static const textMuted = Color(0xFF9CA3AF);
+  static const textDisabled = Color(0xFF6B7280);
+  static const inputBg = Color(0xFF1C2545);
 }
 
-// ── Loading overlay ──────────────────────────────────────────────────────────
 class LoadingOverlay extends StatelessWidget {
   final bool isLoading;
   final Widget child;
-  const LoadingOverlay({super.key, required this.isLoading, required this.child});
+  const LoadingOverlay(
+      {super.key, required this.isLoading, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,8 @@ class LoadingOverlay extends StatelessWidget {
             color: Colors.black54,
             child: const Center(
               child: SizedBox(
-                width: 48, height: 48,
+                width: 44,
+                height: 44,
                 child: CircularProgressIndicator(
                   color: DarkColors.accent,
                   strokeWidth: 2.5,
@@ -42,8 +45,7 @@ class LoadingOverlay extends StatelessWidget {
   }
 }
 
-// ── Custom text field ────────────────────────────────────────────────────────
-class AppTextField extends StatelessWidget {
+class AppTextField extends StatefulWidget {
   final String label;
   final String? hint;
   final TextEditingController controller;
@@ -74,58 +76,101 @@ class AppTextField extends StatelessWidget {
   });
 
   @override
+  State<AppTextField> createState() => _AppTextFieldState();
+}
+
+class _AppTextFieldState extends State<AppTextField> {
+  bool _focused = false;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label.toUpperCase(),
+          widget.label.toUpperCase(),
           style: const TextStyle(
-            fontSize: 10,
-            letterSpacing: 0.8,
+            fontSize: 11,
+            letterSpacing: 0.7,
             color: DarkColors.textMuted,
             fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 6),
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          maxLines: maxLines,
-          readOnly: readOnly,
-          onTap: onTap,
-          onChanged: onChanged,
-          style: const TextStyle(color: DarkColors.textPrimary, fontSize: 14),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(color: DarkColors.textMuted, fontSize: 13),
-            suffixIcon: suffixIcon,
-            prefixIcon: prefixIcon != null
-                ? IconTheme(
-                    data: const IconThemeData(color: DarkColors.accent, size: 18),
-                    child: prefixIcon!,
-                  )
-                : null,
-            filled: true,
-            fillColor: DarkColors.bg,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            border: OutlineInputBorder(
+        Focus(
+          onFocusChange: (v) => setState(() => _focused = v),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: DarkColors.border),
+              boxShadow: _focused
+                  ? [
+                      BoxShadow(
+                        color: DarkColors.accent.withValues(alpha: 0.25),
+                        blurRadius: 8,
+                      )
+                    ]
+                  : [],
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: DarkColors.border),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: DarkColors.accent, width: 1.5),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFFF87171)),
+            child: TextFormField(
+              controller: widget.controller,
+              validator: widget.validator,
+              keyboardType: widget.keyboardType,
+              obscureText: widget.obscureText,
+              maxLines: widget.maxLines,
+              readOnly: widget.readOnly,
+              onTap: widget.onTap,
+              onChanged: widget.onChanged,
+              style: const TextStyle(
+                  color: DarkColors.textPrimary, fontSize: 14),
+              decoration: InputDecoration(
+                hintText: widget.hint,
+                hintStyle: const TextStyle(
+                    color: DarkColors.textDisabled, fontSize: 13),
+                suffixIcon: widget.suffixIcon != null
+                    ? IconTheme(
+                        data: const IconThemeData(
+                            color: DarkColors.textDisabled, size: 18),
+                        child: widget.suffixIcon!,
+                      )
+                    : null,
+                prefixIcon: widget.prefixIcon != null
+                    ? IconTheme(
+                        data: const IconThemeData(
+                            color: DarkColors.accentLight, size: 18),
+                        child: widget.prefixIcon!,
+                      )
+                    : null,
+                filled: true,
+                fillColor: DarkColors.inputBg,
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 13),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: DarkColors.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: DarkColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                      color: DarkColors.accent, width: 1.5),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(color: Color(0xFFEF4444)),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                      color: Color(0xFFEF4444), width: 1.5),
+                ),
+                errorStyle: const TextStyle(
+                    color: Color(0xFFEF4444), fontSize: 11),
+              ),
             ),
           ),
         ),
@@ -134,8 +179,7 @@ class AppTextField extends StatelessWidget {
   }
 }
 
-// ── Stat card ────────────────────────────────────────────────────────────────
-class StatCard extends StatelessWidget {
+class StatCard extends StatefulWidget {
   final String title;
   final String value;
   final IconData icon;
@@ -152,61 +196,94 @@ class StatCard extends StatelessWidget {
   });
 
   @override
+  State<StatCard> createState() => _StatCardState();
+}
+
+class _StatCardState extends State<StatCard> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-        decoration: BoxDecoration(
-          color: DarkColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: DarkColors.border),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 36, height: 36,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: Icon(icon, color: color, size: 18),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          transform: Matrix4.diagonal3Values(
+  _hovered ? 1.02 : 1.0,
+  _hovered ? 1.02 : 1.0,
+  1.0,
+),
+          transformAlignment: Alignment.center,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF18213F), Color(0xFF121B36)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: DarkColors.textPrimary,
-                      height: 1.1,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: DarkColors.textSecondary,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _hovered
+                  ? DarkColors.accent.withValues(alpha: 0.3)
+                  : DarkColors.border,
             ),
-          ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 30,
+                offset: const Offset(0, 10),
+              ),
+              if (_hovered)
+                BoxShadow(
+                  color: DarkColors.accent.withValues(alpha: 0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(widget.icon, color: widget.color, size: 20),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                widget.value,
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: DarkColors.textPrimary,
+                  height: 1.0,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                widget.title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: DarkColors.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// ── Empty state ──────────────────────────────────────────────────────────────
 class EmptyState extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -240,31 +317,42 @@ class EmptyState extends StatelessWidget {
               child: Icon(icon, size: 48, color: DarkColors.accent),
             ),
             const SizedBox(height: 20),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 17, fontWeight: FontWeight.w600,
-                color: DarkColors.textPrimary,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            Text(title,
+                style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: DarkColors.textPrimary),
+                textAlign: TextAlign.center),
             const SizedBox(height: 6),
-            Text(
-              subtitle,
-              style: const TextStyle(fontSize: 13, color: DarkColors.textSecondary),
-              textAlign: TextAlign.center,
-            ),
+            Text(subtitle,
+                style: const TextStyle(
+                    fontSize: 13, color: DarkColors.textSecondary),
+                textAlign: TextAlign.center),
             if (buttonLabel != null && onButtonPressed != null) ...[
               const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: onButtonPressed,
-                icon: const Icon(Icons.add),
-                label: Text(buttonLabel!),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: DarkColors.accent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              GestureDetector(
+                onTap: onButtonPressed,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [DarkColors.accent, DarkColors.accentEnd],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add, color: Colors.white, size: 16),
+                      const SizedBox(width: 8),
+                      Text(buttonLabel!,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -275,7 +363,6 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-// ── Avatar initials ──────────────────────────────────────────────────────────
 class AvatarInitials extends StatelessWidget {
   final String name;
   final double radius;
@@ -297,30 +384,28 @@ class AvatarInitials extends StatelessWidget {
 
   Color _bgColor(String name) {
     final colors = [
-      const Color(0xFF1A1040),
-      const Color(0xFF0A2010),
+      const Color(0xFF1E1040),
+      const Color(0xFF0A2818),
       const Color(0xFF201800),
       const Color(0xFF200A0A),
-      const Color(0xFF0A1A20),
-      const Color(0xFF1A0A20),
+      const Color(0xFF0A1A28),
+      const Color(0xFF1A0A28),
     ];
-  
-   
     int hash = name.codeUnits.fold(0, (prev, e) => prev + e);
     return colors[hash % colors.length];
   }
 
   Color _fgColor(String name) {
-    final fgColors = [
-      const Color(0xFF6C63FF),
-      const Color(0xFF34D399),
-      const Color(0xFFFBBF24),
-      const Color(0xFFF87171),
-      const Color(0xFF38BDF8),
-      const Color(0xFFE879F9),
+    final colors = [
+      const Color(0xFF8B5CF6),
+      const Color(0xFF10B981),
+      const Color(0xFFF59E0B),
+      const Color(0xFFEF4444),
+      const Color(0xFF3B82F6),
+      const Color(0xFFEC4899),
     ];
     int hash = name.codeUnits.fold(0, (prev, e) => prev + e);
-    return fgColors[hash % fgColors.length];
+    return colors[hash % colors.length];
   }
 
   @override
@@ -331,6 +416,8 @@ class AvatarInitials extends StatelessWidget {
       decoration: BoxDecoration(
         color: _bgColor(name),
         borderRadius: BorderRadius.circular(radius * 0.45),
+        border: Border.all(
+            color: _fgColor(name).withValues(alpha: 0.3), width: 1),
       ),
       child: Center(
         child: Text(
@@ -346,34 +433,40 @@ class AvatarInitials extends StatelessWidget {
   }
 }
 
-// ── Department badge ─────────────────────────────────────────────────────────
 class DepartmentBadge extends StatelessWidget {
   final String department;
-
   const DepartmentBadge({super.key, required this.department});
 
   Color _color(String dept) {
     final map = {
-      'Engineering': const Color(0xFF6C63FF),
-      'Design': const Color(0xFF34D399),
-      'Marketing': const Color(0xFFFBBF24),
-      'HR': const Color(0xFFF87171),
-      'Finance': const Color(0xFF38BDF8),
-      'Sales': const Color(0xFFE879F9),
+      'Engineering': const Color(0xFF8B5CF6),
+      'Product': const Color(0xFF8B5CF6),
+      'Design': const Color(0xFF10B981),
+      'Marketing': const Color(0xFFF59E0B),
+      'HR': const Color(0xFFEF4444),
+      'Finance': const Color(0xFF3B82F6),
+      'Sales': const Color(0xFFEC4899),
+      'Operations': const Color(0xFF06B6D4),
+      'Legal': const Color(0xFF8B5CF6),
+      'Customer Support': const Color(0xFF10B981),
     };
-    return map[dept] ?? const Color(0xFF6C63FF);
+    return map[dept] ?? const Color(0xFF8B5CF6);
   }
 
   Color _bg(String dept) {
     final map = {
-      'Engineering': const Color(0xFF1A1040),
-      'Design': const Color(0xFF0A2010),
+      'Engineering': const Color(0xFF1E1040),
+      'Product': const Color(0xFF1E1040),
+      'Design': const Color(0xFF0A2818),
       'Marketing': const Color(0xFF201800),
       'HR': const Color(0xFF200A0A),
-      'Finance': const Color(0xFF0A1A20),
-      'Sales': const Color(0xFF1A0A20),
+      'Finance': const Color(0xFF0A1A28),
+      'Sales': const Color(0xFF200A18),
+      'Operations': const Color(0xFF0A1A20),
+      'Legal': const Color(0xFF1E1040),
+      'Customer Support': const Color(0xFF0A2818),
     };
-    return map[dept] ?? const Color(0xFF1A1040);
+    return map[dept] ?? const Color(0xFF1E1040);
   }
 
   @override
@@ -383,6 +476,8 @@ class DepartmentBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: _bg(department),
         borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+            color: _color(department).withValues(alpha: 0.25)),
       ),
       child: Text(
         department,
@@ -396,8 +491,7 @@ class DepartmentBadge extends StatelessWidget {
   }
 }
 
-// ── Gradient button ──────────────────────────────────────────────────────────
-class GradientButton extends StatelessWidget {
+class GradientButton extends StatefulWidget {
   final String label;
   final IconData? icon;
   final VoidCallback onPressed;
@@ -410,41 +504,62 @@ class GradientButton extends StatelessWidget {
   });
 
   @override
+  State<GradientButton> createState() => _GradientButtonState();
+}
+
+class _GradientButtonState extends State<GradientButton> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [DarkColors.accent, DarkColors.accentEnd],
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-            ],
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _hovered
+                  ? [const Color(0xFF8B5CF6), const Color(0xFF60A5FA)]
+                  : [DarkColors.accent, DarkColors.accentEnd],
             ),
-          ],
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: DarkColors.accent.withValues(alpha: 0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (widget.icon != null) ...[
+                Icon(widget.icon, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                widget.label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 String formatCurrency(double amount) {
   if (amount >= 1000) {
     return '\$${(amount / 1000).toStringAsFixed(1)}k';
