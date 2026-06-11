@@ -4,6 +4,7 @@ import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
 import '../widgets/common_widgets.dart';
 import 'departments_screen.dart';
+import 'payroll_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -181,6 +182,11 @@ class _DashboardScreenState extends State<DashboardScreen>
                                   : '\$${(emp.totalSalary / 1000).toStringAsFixed(0)}k',
                               icon: Icons.account_balance_wallet_rounded,
                               color: const Color(0xFFEF4444),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const PayrollScreen()),
+                              ),
                             )),
                           ])
                         : Column(children: [
@@ -230,6 +236,11 @@ class _DashboardScreenState extends State<DashboardScreen>
                                     : '\$${(emp.totalSalary / 1000).toStringAsFixed(0)}k',
                                 icon: Icons.account_balance_wallet_rounded,
                                 color: const Color(0xFFEF4444),
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const PayrollScreen()),
+                                ),
                               )),
                             ]),
                           ]),
