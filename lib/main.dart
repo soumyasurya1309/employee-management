@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'providers/employee_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/add_edit_employee_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/employee_detail_screen.dart';
@@ -28,6 +29,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeProvider()),
       ],
@@ -41,10 +43,14 @@ class EmployeeManagementApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+
     return MaterialApp(
       title: 'EmpManager',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeProvider.themeMode,
       scaffoldMessengerKey: NotificationService.messengerKey,
       initialRoute: '/',
       onGenerateRoute: (settings) {

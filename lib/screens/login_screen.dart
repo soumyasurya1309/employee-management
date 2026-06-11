@@ -25,11 +25,13 @@ class _LoginScreenState extends State<LoginScreen>
     super.initState();
     _animController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 600));
-    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
+    _fadeAnim =
+        CurvedAnimation(parent: _animController, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
       begin: const Offset(0, 0.08),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
+    ).animate(
+        CurvedAnimation(parent: _animController, curve: Curves.easeOut));
     _animController.forward();
   }
 
@@ -57,7 +59,8 @@ class _LoginScreenState extends State<LoginScreen>
           content: Text(auth.errorMessage ?? 'Login failed'),
           backgroundColor: const Color(0xFFF87171),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)),
         ),
       );
       auth.clearError();
@@ -71,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen>
         return LoadingOverlay(
           isLoading: auth.status == AuthStatus.loading,
           child: Scaffold(
-            backgroundColor: DarkColors.bg,
+            backgroundColor: AppColors.bg(context),
             body: SafeArea(
               child: FadeTransition(
                 opacity: _fadeAnim,
@@ -85,10 +88,14 @@ class _LoginScreenState extends State<LoginScreen>
                         const SizedBox(height: 40),
                         Center(
                           child: Container(
-                            width: 56, height: 56,
+                            width: 56,
+                            height: 56,
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [DarkColors.accent, DarkColors.accentEnd],
+                                colors: [
+                                  AppColors.accent,
+                                  AppColors.accentEnd
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
@@ -99,15 +106,17 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Text('Welcome back',
+                        Text('Welcome back',
                             style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.w600,
-                                color: DarkColors.textPrimary),
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary(context)),
                             textAlign: TextAlign.center),
                         const SizedBox(height: 4),
-                        const Text('Sign in to EmpTrack',
-                            style: TextStyle(fontSize: 13,
-                                color: DarkColors.textSecondary),
+                        Text('Sign in to EmpTrack',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: AppColors.textSecondary(context)),
                             textAlign: TextAlign.center),
                         const SizedBox(height: 32),
                         Form(
@@ -119,28 +128,34 @@ class _LoginScreenState extends State<LoginScreen>
                                 hint: 'admin@company.com',
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
-                                prefixIcon: const Icon(Icons.mail_outline_rounded),
-                                validator: (v) => v == null || !v.contains('@')
-                                    ? 'Enter a valid email' : null,
+                                prefixIcon:
+                                    const Icon(Icons.mail_outline_rounded),
+                                validator: (v) =>
+                                    v == null || !v.contains('@')
+                                        ? 'Enter a valid email'
+                                        : null,
                               ),
                               const SizedBox(height: 14),
                               AppTextField(
                                 label: 'Password',
                                 controller: _passwordController,
                                 obscureText: _obscurePassword,
-                                prefixIcon: const Icon(Icons.lock_outline_rounded),
+                                prefixIcon: const Icon(
+                                    Icons.lock_outline_rounded),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _obscurePassword
                                         ? Icons.visibility_off_outlined
                                         : Icons.visibility_outlined,
-                                    color: DarkColors.textMuted, size: 18,
+                                    color: AppColors.textMuted(context),
+                                    size: 18,
                                   ),
-                                  onPressed: () => setState(
-                                      () => _obscurePassword = !_obscurePassword),
+                                  onPressed: () => setState(() =>
+                                      _obscurePassword = !_obscurePassword),
                                 ),
                                 validator: (v) => v == null || v.length < 6
-                                    ? 'Minimum 6 characters' : null,
+                                    ? 'Minimum 6 characters'
+                                    : null,
                               ),
                               const SizedBox(height: 10),
                               Align(
@@ -150,7 +165,8 @@ class _LoginScreenState extends State<LoginScreen>
                                       context, '/forgot-password'),
                                   child: const Text('Forgot password?',
                                       style: TextStyle(
-                                          color: DarkColors.accent, fontSize: 12)),
+                                          color: AppColors.accent,
+                                          fontSize: 12)),
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -163,28 +179,38 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         const SizedBox(height: 20),
                         Row(children: [
-                          const Expanded(child: Divider(color: DarkColors.border)),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
+                          Expanded(
+                              child: Divider(
+                                  color: AppColors.border(context))),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12),
                             child: Text('or',
                                 style: TextStyle(
-                                    color: DarkColors.textMuted, fontSize: 12)),
+                                    color: AppColors.textMuted(context),
+                                    fontSize: 12)),
                           ),
-                          const Expanded(child: Divider(color: DarkColors.border)),
+                          Expanded(
+                              child: Divider(
+                                  color: AppColors.border(context))),
                         ]),
                         const SizedBox(height: 20),
                         GestureDetector(
                           onTap: () =>
                               Navigator.pushNamed(context, '/register'),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 13),
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 13),
                             decoration: BoxDecoration(
-                              border: Border.all(color: DarkColors.border),
+                              border: Border.all(
+                                  color: AppColors.border(context)),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text('Create new account',
+                            child: Text('Create new account',
                                 style: TextStyle(
-                                    color: DarkColors.textSecondary, fontSize: 14),
+                                    color:
+                                        AppColors.textSecondary(context),
+                                    fontSize: 14),
                                 textAlign: TextAlign.center),
                           ),
                         ),
@@ -192,9 +218,10 @@ class _LoginScreenState extends State<LoginScreen>
                         GestureDetector(
                           onTap: () =>
                               Navigator.pushNamed(context, '/otp-demo'),
-                          child: const Text('Sign in with OTP (Demo)',
+                          child: Text('Sign in with OTP (Demo)',
                               style: TextStyle(
-                                  color: DarkColors.textMuted, fontSize: 12),
+                                  color: AppColors.textMuted(context),
+                                  fontSize: 12),
                               textAlign: TextAlign.center),
                         ),
                       ],

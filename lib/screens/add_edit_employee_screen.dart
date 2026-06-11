@@ -67,17 +67,15 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
   }
 
   Future<void> _pickDate() async {
+    final scheme = Theme.of(context).colorScheme;
     final picked = await showDatePicker(
       context: context,
       initialDate: _joiningDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
       builder: (context, child) => Theme(
-        data: ThemeData.dark().copyWith(
-          colorScheme: const ColorScheme.dark(
-            primary: DarkColors.accent,
-            surface: DarkColors.surface,
-          ),
+        data: Theme.of(context).copyWith(
+          colorScheme: scheme.copyWith(primary: AppColors.accent),
         ),
         child: child!,
       ),
@@ -150,15 +148,18 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
         return LoadingOverlay(
           isLoading: provider.status == EmployeeStatus.loading,
           child: Scaffold(
-            backgroundColor: DarkColors.bg,
+            backgroundColor: AppColors.bg(context),
             appBar: AppBar(
-              backgroundColor: DarkColors.bg,
+              backgroundColor: AppColors.bg(context),
               elevation: 0,
-              iconTheme: const IconThemeData(color: DarkColors.textSecondary),
-              title: Text(_isEdit ? 'Edit employee' : 'Add employee',
-                  style: const TextStyle(
-                      color: DarkColors.textPrimary,
-                      fontSize: 17, fontWeight: FontWeight.w500)),
+              iconTheme: IconThemeData(color: AppColors.textSecondary(context)),
+              title: Text(
+                _isEdit ? 'Edit employee' : 'Add employee',
+                style: TextStyle(
+                    color: AppColors.textPrimary(context),
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500),
+              ),
             ),
             body: Form(
               key: _formKey,
@@ -177,7 +178,8 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                           controller: _nameController,
                           prefixIcon: const Icon(Icons.person_outline_rounded),
                           validator: (v) => v == null || v.trim().isEmpty
-                              ? 'Required' : null,
+                              ? 'Required'
+                              : null,
                         ),
                         const SizedBox(height: 12),
                         AppTextField(
@@ -186,7 +188,8 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                           controller: _employeeIdController,
                           prefixIcon: const Icon(Icons.badge_outlined),
                           validator: (v) => v == null || v.trim().isEmpty
-                              ? 'Required' : null,
+                              ? 'Required'
+                              : null,
                         ),
                         const SizedBox(height: 12),
                         AppTextField(
@@ -196,7 +199,8 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                           prefixIcon: const Icon(Icons.location_on_outlined),
                           maxLines: 2,
                           validator: (v) => v == null || v.trim().isEmpty
-                              ? 'Required' : null,
+                              ? 'Required'
+                              : null,
                         ),
                       ],
                     ),
@@ -229,7 +233,7 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                       title: 'JOB INFO',
                       icon: Icons.work_outline_rounded,
                       children: [
-                        _DarkDropdown(
+                        _AppDropdown(
                           label: 'Department',
                           value: _selectedDepartment,
                           items: AppConstants.departments,
@@ -240,7 +244,7 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                               v == null ? 'Select department' : null,
                         ),
                         const SizedBox(height: 12),
-                        _DarkDropdown(
+                        _AppDropdown(
                           label: 'Designation',
                           value: _selectedDesignation,
                           items: AppConstants.designations,
@@ -268,10 +272,10 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                           readOnly: true,
                           onTap: _pickDate,
                           prefixIcon: const Icon(Icons.calendar_today_outlined),
-                          suffixIcon: const Icon(Icons.arrow_drop_down,
-                              color: DarkColors.textMuted),
+                          suffixIcon: const Icon(Icons.arrow_drop_down),
                           validator: (v) => v == null || v.trim().isEmpty
-                              ? 'Select date' : null,
+                              ? 'Select date'
+                              : null,
                         ),
                       ],
                     ),
@@ -306,23 +310,24 @@ class _Section extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: DarkColors.surface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: DarkColors.border),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(icon, size: 14, color: DarkColors.accent),
+            Icon(icon, size: 14, color: AppColors.accent),
             const SizedBox(width: 6),
             Text(title,
-                style: const TextStyle(
-                    fontSize: 10, letterSpacing: 0.8,
-                    color: DarkColors.textMuted)),
+                style: TextStyle(
+                    fontSize: 10,
+                    letterSpacing: 0.8,
+                    color: AppColors.textMuted(context))),
           ]),
           const SizedBox(height: 2),
-          const Divider(color: DarkColors.border, height: 20),
+          Divider(color: AppColors.border(context), height: 20),
           ...children,
         ],
       ),
@@ -330,7 +335,7 @@ class _Section extends StatelessWidget {
   }
 }
 
-class _DarkDropdown extends StatelessWidget {
+class _AppDropdown extends StatelessWidget {
   final String label;
   final String? value;
   final List<String> items;
@@ -338,7 +343,7 @@ class _DarkDropdown extends StatelessWidget {
   final void Function(String?) onChanged;
   final String? Function(String?) validator;
 
-  const _DarkDropdown({
+  const _AppDropdown({
     required this.label,
     required this.value,
     required this.items,
@@ -352,37 +357,39 @@ class _DarkDropdown extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label.toUpperCase(),
-            style: const TextStyle(
-                fontSize: 10, letterSpacing: 0.8,
-                color: DarkColors.textMuted,
-                fontWeight: FontWeight.w500)),
+        Text(
+          label.toUpperCase(),
+          style: TextStyle(
+              fontSize: 10,
+              letterSpacing: 0.8,
+              color: AppColors.textMuted(context),
+              fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 6),
         DropdownButtonFormField<String>(
           initialValue: value,
           onChanged: onChanged,
           validator: validator,
-          dropdownColor: DarkColors.surface,
-          style: const TextStyle(color: DarkColors.textPrimary, fontSize: 14),
-          icon: const Icon(Icons.arrow_drop_down, color: DarkColors.textMuted),
+          dropdownColor: AppColors.surface(context),
+          style: TextStyle(color: AppColors.textPrimary(context), fontSize: 14),
+          icon: Icon(Icons.arrow_drop_down, color: AppColors.textMuted(context)),
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: DarkColors.accent, size: 18),
+            prefixIcon: Icon(icon, color: AppColors.accent, size: 18),
             filled: true,
-            fillColor: DarkColors.bg,
+            fillColor: AppColors.bg(context),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: DarkColors.border),
+              borderSide: BorderSide(color: AppColors.border(context)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: DarkColors.border),
+              borderSide: BorderSide(color: AppColors.border(context)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide:
-                  const BorderSide(color: DarkColors.accent, width: 1.5),
+              borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
             ),
           ),
           isExpanded: true,
@@ -390,8 +397,8 @@ class _DarkDropdown extends StatelessWidget {
               .map((item) => DropdownMenuItem(
                   value: item,
                   child: Text(item,
-                      style: const TextStyle(
-                          color: DarkColors.textPrimary, fontSize: 13))))
+                      style: TextStyle(
+                          color: AppColors.textPrimary(context), fontSize: 13))))
               .toList(),
         ),
       ],

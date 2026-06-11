@@ -46,16 +46,13 @@ class _ExportScreenState extends State<ExportScreen> {
                 'Avg Salary: \$${(emp.averageSalary / 1000).toStringAsFixed(1)}k',
                 style: pw.TextStyle(font: font, fontSize: 12)),
             pw.SizedBox(height: 16),
-            // FIX: replaced deprecated Table.fromTextArray with TableHelper.fromTextArray
             pw.TableHelper.fromTextArray(
               headers: ['Name', 'Department', 'Salary', 'Joining Date'],
               data: emp.employees.map((e) {
-                // FIX: joiningDate is non-nullable — removed null check and ! operators
                 final joining =
                     '${e.joiningDate.day}/${e.joiningDate.month}/${e.joiningDate.year}';
                 return [
                   e.name,
-                  // FIX: department is non-nullable — removed ?? 'N/A'
                   e.department,
                   '\$${e.salary.toStringAsFixed(0)}',
                   joining,
@@ -106,16 +103,13 @@ class _ExportScreenState extends State<ExportScreen> {
       ]);
 
       for (final e in emp.employees) {
-        // FIX: joiningDate is non-nullable — removed null check and ! operators
         final joining =
             '${e.joiningDate.day}/${e.joiningDate.month}/${e.joiningDate.year}';
         sheet.appendRow([
           TextCellValue(e.name),
-          // FIX: department is non-nullable — removed ?? 'N/A'
           TextCellValue(e.department),
           TextCellValue('\$${e.salary.toStringAsFixed(0)}'),
           TextCellValue(joining),
-          // FIX: email is non-nullable — removed ?? 'N/A'
           TextCellValue(e.email),
         ]);
       }
@@ -145,24 +139,25 @@ class _ExportScreenState extends State<ExportScreen> {
     return Consumer<EmployeeProvider>(
       builder: (context, emp, _) {
         return Scaffold(
-          backgroundColor: DarkColors.bg,
+          backgroundColor: AppColors.bg(context),
           appBar: AppBar(
-            backgroundColor: DarkColors.bg,
+            backgroundColor: AppColors.bg(context),
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded,
-                  color: DarkColors.textMuted, size: 18),
+              icon: Icon(Icons.arrow_back_ios_rounded,
+                  color: AppColors.textMuted(context), size: 18),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text('Export Reports',
+            title: Text('Export Reports',
                 style: TextStyle(
-                    color: DarkColors.textPrimary,
+                    color: AppColors.textPrimary(context),
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
           ),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // Summary banner — gradient works on both themes
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -208,11 +203,11 @@ class _ExportScreenState extends State<ExportScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text('EXPORT OPTIONS',
+              Text('EXPORT OPTIONS',
                   style: TextStyle(
                       fontSize: 11,
                       letterSpacing: 0.8,
-                      color: DarkColors.textDisabled)),
+                      color: AppColors.textDisabled(context))),
               const SizedBox(height: 12),
               _ExportCard(
                 icon: Icons.picture_as_pdf_rounded,
@@ -298,73 +293,73 @@ class _ExportCard extends StatefulWidget {
 }
 
 class _ExportCardState extends State<_ExportCard> {
-  bool _hovered = false;
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.loading ? null : widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: _hovered
-                ? widget.color.withValues(alpha: 0.12)
-                : DarkColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _hovered
-                  ? widget.color.withValues(alpha: 0.4)
-                  : DarkColors.border,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
-              ),
-            ],
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) => setState(() => _pressed = false),
+      onTapCancel: () => setState(() => _pressed = false),
+      onTap: widget.loading ? null : widget.onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: _pressed
+              ? widget.color.withValues(alpha: 0.10)
+              : AppColors.surface(context),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: _pressed
+                ? widget.color.withValues(alpha: 0.4)
+                : AppColors.border(context),
           ),
-          child: Row(children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: widget.color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: widget.loading
-                  ? Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: widget.color),
-                    )
-                  : Icon(widget.icon, color: widget.color, size: 22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.title,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: DarkColors.textPrimary)),
-                  const SizedBox(height: 3),
-                  Text(widget.subtitle,
-                      style: const TextStyle(
-                          fontSize: 12, color: DarkColors.textDisabled)),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios_rounded,
-                color: widget.color.withValues(alpha: 0.5), size: 14),
-          ]),
+          ],
         ),
+        child: Row(children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: widget.color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: widget.loading
+                ? Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: widget.color),
+                  )
+                : Icon(widget.icon, color: widget.color, size: 22),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.title,
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary(context))),
+                const SizedBox(height: 3),
+                Text(widget.subtitle,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textDisabled(context))),
+              ],
+            ),
+          ),
+          Icon(Icons.arrow_forward_ios_rounded,
+              color: widget.color.withValues(alpha: 0.5), size: 14),
+        ]),
       ),
     );
   }

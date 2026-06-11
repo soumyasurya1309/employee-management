@@ -15,7 +15,7 @@ class EmployeeDetailScreen extends StatelessWidget {
     final isAdmin = context.watch<AuthProvider>().isAdmin;
 
     return Scaffold(
-      backgroundColor: DarkColors.bg,
+      backgroundColor: AppColors.bg(context),
       body: CustomScrollView(
         slivers: [
           _buildAppBar(context, employee, isAdmin),
@@ -24,11 +24,11 @@ class EmployeeDetailScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  _buildInfoCard(employee),
+                  _buildInfoCard(context, employee),
                   const SizedBox(height: 10),
-                  _buildContactCard(employee),
+                  _buildContactCard(context, employee),
                   const SizedBox(height: 10),
-                  _buildJobCard(employee),
+                  _buildJobCard(context, employee),
                   const SizedBox(height: 10),
                   if (isAdmin) _buildActionButtons(context, employee),
                   const SizedBox(height: 24),
@@ -43,15 +43,18 @@ class EmployeeDetailScreen extends StatelessWidget {
 
   SliverAppBar _buildAppBar(
       BuildContext context, Employee employee, bool isAdmin) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SliverAppBar(
       expandedHeight: 200,
       pinned: true,
-      backgroundColor: DarkColors.bg,
-      iconTheme: const IconThemeData(color: DarkColors.textSecondary),
+      backgroundColor: AppColors.bg(context),
+      iconTheme: IconThemeData(color: AppColors.textSecondary(context)),
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF13103A),
+          decoration: BoxDecoration(
+            color: isDark
+                ? const Color(0xFF13103A)
+                : const Color(0xFFEEF2FF),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -61,8 +64,8 @@ class EmployeeDetailScreen extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 employee.name,
-                style: const TextStyle(
-                  color: DarkColors.textPrimary,
+                style: TextStyle(
+                  color: AppColors.textPrimary(context),
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                 ),
@@ -70,8 +73,8 @@ class EmployeeDetailScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 '${employee.designation} • ${employee.department}',
-                style: const TextStyle(
-                  color: DarkColors.textSecondary,
+                style: TextStyle(
+                  color: AppColors.textSecondary(context),
                   fontSize: 13,
                 ),
               ),
@@ -83,7 +86,7 @@ class EmployeeDetailScreen extends StatelessWidget {
         if (isAdmin)
           IconButton(
             icon: const Icon(Icons.edit_outlined,
-                color: DarkColors.accent, size: 20),
+                color: AppColors.accent, size: 20),
             onPressed: () => Navigator.pushNamed(
               context,
               '/employees/edit',
@@ -94,7 +97,7 @@ class EmployeeDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard(Employee employee) {
+  Widget _buildInfoCard(BuildContext context, Employee employee) {
     return _Section(
       title: 'EMPLOYEE INFO',
       icon: Icons.badge_outlined,
@@ -109,7 +112,7 @@ class EmployeeDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContactCard(Employee employee) {
+  Widget _buildContactCard(BuildContext context, Employee employee) {
     return _Section(
       title: 'CONTACT DETAILS',
       icon: Icons.mail_outline_rounded,
@@ -120,7 +123,7 @@ class EmployeeDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildJobCard(Employee employee) {
+  Widget _buildJobCard(BuildContext context, Employee employee) {
     return _Section(
       title: 'JOB DETAILS',
       icon: Icons.work_outline_rounded,
@@ -146,19 +149,18 @@ class EmployeeDetailScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 13),
             decoration: BoxDecoration(
-              color: DarkColors.surface,
+              color: AppColors.surface(context),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: DarkColors.border),
+              border: Border.all(color: AppColors.border(context)),
             ),
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.edit_outlined,
-                    color: DarkColors.accent, size: 16),
+                Icon(Icons.edit_outlined, color: AppColors.accent, size: 16),
                 SizedBox(width: 6),
                 Text('Edit',
                     style: TextStyle(
-                        color: DarkColors.accent,
+                        color: AppColors.accent,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
               ],
@@ -173,16 +175,15 @@ class EmployeeDetailScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 13),
             decoration: BoxDecoration(
-              color: const Color(0xFF200A0A),
+              color: const Color(0xFFFEF2F2),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                  color: const Color(0xFFF87171).withValues(alpha: 0.3)),
+                  color: const Color(0xFFF87171).withValues(alpha: 0.4)),
             ),
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.delete_outline,
-                    color: Color(0xFFF87171), size: 16),
+                Icon(Icons.delete_outline, color: Color(0xFFF87171), size: 16),
                 SizedBox(width: 6),
                 Text('Delete',
                     style: TextStyle(
@@ -202,21 +203,20 @@ class EmployeeDetailScreen extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: DarkColors.surface,
+        backgroundColor: AppColors.surface(ctx),
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete employee',
+        title: Text('Delete employee',
             style: TextStyle(
-                color: DarkColors.textPrimary, fontSize: 16)),
+                color: AppColors.textPrimary(ctx), fontSize: 16)),
         content: Text('Remove ${employee.name}? This cannot be undone.',
-            style: const TextStyle(
-                color: DarkColors.textSecondary, fontSize: 13)),
+            style: TextStyle(
+                color: AppColors.textSecondary(ctx), fontSize: 13)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel',
-                  style:
-                      TextStyle(color: DarkColors.textSecondary))),
+              child: Text('Cancel',
+                  style: TextStyle(color: AppColors.textSecondary(ctx)))),
           GestureDetector(
             onTap: () => Navigator.pop(ctx, true),
             child: Container(
@@ -267,23 +267,23 @@ class _Section extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: DarkColors.surface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: DarkColors.border),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(icon, size: 14, color: DarkColors.accent),
+            const Icon(Icons.info_outline, size: 14, color: AppColors.accent),
             const SizedBox(width: 6),
             Text(title,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 10,
                     letterSpacing: 0.8,
-                    color: DarkColors.textMuted)),
+                    color: AppColors.textMuted(context))),
           ]),
-          const Divider(color: DarkColors.border, height: 20),
+          Divider(color: AppColors.border(context), height: 20),
           ...children,
         ],
       ),
@@ -312,22 +312,21 @@ class _InfoRow extends StatelessWidget {
               SizedBox(
                 width: 100,
                 child: Text(label,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 12,
-                        color: DarkColors.textSecondary)),
+                        color: AppColors.textSecondary(context))),
               ),
               Expanded(
                 child: Text(value,
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: valueColor ?? DarkColors.textPrimary)),
+                        color: valueColor ?? AppColors.textPrimary(context))),
               ),
             ],
           ),
         ),
-        if (!isLast)
-          const Divider(color: DarkColors.border, height: 1),
+        if (!isLast) Divider(color: AppColors.border(context), height: 1),
       ],
     );
   }

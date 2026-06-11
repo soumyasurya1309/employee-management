@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ── Static dark palette (kept for backward compat) ─────────────
 class DarkColors {
   static const bg = Color(0xFF0B1020);
   static const surface = Color(0xFF161D35);
@@ -15,6 +16,97 @@ class DarkColors {
   static const inputBg = Color(0xFF1C2545);
 }
 
+// ── Dynamic colors — use these in new/updated widgets ──────────
+class AppColors {
+  static Color bg(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF0B1020)
+          : const Color(0xFFF4F6FB);
+
+  static Color surface(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF161D35)
+          : Colors.white;
+
+  static Color elevated(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF1C2545)
+          : const Color(0xFFEEF2FF);
+
+  static Color border(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0x14FFFFFF)
+          : const Color(0xFFE5E7EB);
+
+  static Color inputBg(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF1C2545)
+          : Colors.white;
+
+  static Color textPrimary(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFFFFFFF)
+          : const Color(0xFF1A1A2E);
+
+  static Color textSecondary(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFD1D5DB)
+          : const Color(0xFF4B5563);
+
+  static Color textMuted(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF9CA3AF)
+          : const Color(0xFF6B7280);
+
+  static Color textDisabled(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF6B7280)
+          : const Color(0xFF9CA3AF);
+
+  static const accent = Color(0xFF7C3AED);
+  static const accentLight = Color(0xFF8B5CF6);
+  static const accentEnd = Color(0xFF3B82F6);
+
+  static Color cardGradientStart(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF18213F)
+          : const Color(0xFFFFFFFF);
+
+  static Color cardGradientEnd(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF121B36)
+          : const Color(0xFFF8F9FF);
+}
+
+// ── Theme toggle using provider ────────────────────────────────
+class ThemeToggleIconButton extends StatelessWidget {
+  final VoidCallback onToggle;
+  const ThemeToggleIconButton({super.key, required this.onToggle});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return IconButton(
+      tooltip: isDark ? 'Switch to Light' : 'Switch to Dark',
+      icon: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, anim) => RotationTransition(
+          turns: Tween(begin: 0.75, end: 1.0).animate(anim),
+          child: child,
+        ),
+        child: Icon(
+          isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+          key: ValueKey(isDark),
+          color: AppColors.textMuted(context),
+          size: 20,
+        ),
+      ),
+      onPressed: onToggle,
+    );
+  }
+}
+
+// ── LoadingOverlay ──────────────────────────────────────────────
 class LoadingOverlay extends StatelessWidget {
   final bool isLoading;
   final Widget child;
@@ -34,7 +126,7 @@ class LoadingOverlay extends StatelessWidget {
                 width: 44,
                 height: 44,
                 child: CircularProgressIndicator(
-                  color: DarkColors.accent,
+                  color: AppColors.accent,
                   strokeWidth: 2.5,
                 ),
               ),
@@ -45,6 +137,7 @@ class LoadingOverlay extends StatelessWidget {
   }
 }
 
+// ── AppTextField ────────────────────────────────────────────────
 class AppTextField extends StatefulWidget {
   final String label;
   final String? hint;
@@ -89,10 +182,10 @@ class _AppTextFieldState extends State<AppTextField> {
       children: [
         Text(
           widget.label.toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
             letterSpacing: 0.7,
-            color: DarkColors.textMuted,
+            color: AppColors.textMuted(context),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -106,7 +199,7 @@ class _AppTextFieldState extends State<AppTextField> {
               boxShadow: _focused
                   ? [
                       BoxShadow(
-                        color: DarkColors.accent.withValues(alpha: 0.25),
+                        color: AppColors.accent.withValues(alpha: 0.25),
                         blurRadius: 8,
                       )
                     ]
@@ -121,42 +214,44 @@ class _AppTextFieldState extends State<AppTextField> {
               readOnly: widget.readOnly,
               onTap: widget.onTap,
               onChanged: widget.onChanged,
-              style: const TextStyle(
-                  color: DarkColors.textPrimary, fontSize: 14),
+              style: TextStyle(
+                  color: AppColors.textPrimary(context), fontSize: 14),
               decoration: InputDecoration(
                 hintText: widget.hint,
-                hintStyle: const TextStyle(
-                    color: DarkColors.textDisabled, fontSize: 13),
+                hintStyle: TextStyle(
+                    color: AppColors.textDisabled(context), fontSize: 13),
                 suffixIcon: widget.suffixIcon != null
                     ? IconTheme(
-                        data: const IconThemeData(
-                            color: DarkColors.textDisabled, size: 18),
+                        data: IconThemeData(
+                            color: AppColors.textDisabled(context), size: 18),
                         child: widget.suffixIcon!,
                       )
                     : null,
                 prefixIcon: widget.prefixIcon != null
                     ? IconTheme(
                         data: const IconThemeData(
-                            color: DarkColors.accentLight, size: 18),
+                            color: AppColors.accentLight, size: 18),
                         child: widget.prefixIcon!,
                       )
                     : null,
                 filled: true,
-                fillColor: DarkColors.inputBg,
+                fillColor: AppColors.inputBg(context),
                 contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14, vertical: 13),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: DarkColors.border),
+                  borderSide:
+                      BorderSide(color: AppColors.border(context)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: DarkColors.border),
+                  borderSide:
+                      BorderSide(color: AppColors.border(context)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: const BorderSide(
-                      color: DarkColors.accent, width: 1.5),
+                      color: AppColors.accent, width: 1.5),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -179,6 +274,7 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 }
 
+// ── StatCard ────────────────────────────────────────────────────
 class StatCard extends StatefulWidget {
   final String title;
   final String value;
@@ -212,33 +308,36 @@ class _StatCardState extends State<StatCard> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           transform: Matrix4.diagonal3Values(
-  _hovered ? 1.02 : 1.0,
-  _hovered ? 1.02 : 1.0,
-  1.0,
-),
+            _hovered ? 1.02 : 1.0,
+            _hovered ? 1.02 : 1.0,
+            1.0,
+          ),
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF18213F), Color(0xFF121B36)],
+            gradient: LinearGradient(
+              colors: [
+                AppColors.cardGradientStart(context),
+                AppColors.cardGradientEnd(context),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: _hovered
-                  ? DarkColors.accent.withValues(alpha: 0.3)
-                  : DarkColors.border,
+                  ? AppColors.accent.withValues(alpha: 0.3)
+                  : AppColors.border(context),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.18),
+                color: Colors.black.withValues(alpha: 0.08),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
               if (_hovered)
                 BoxShadow(
-                  color: DarkColors.accent.withValues(alpha: 0.15),
+                  color: AppColors.accent.withValues(alpha: 0.15),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
@@ -255,24 +354,25 @@ class _StatCardState extends State<StatCard> {
                   color: widget.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(widget.icon, color: widget.color, size: 20),
+                child:
+                    Icon(widget.icon, color: widget.color, size: 20),
               ),
               const SizedBox(height: 14),
               Text(
                 widget.value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
-                  color: DarkColors.textPrimary,
+                  color: AppColors.textPrimary(context),
                   height: 1.0,
                 ),
               ),
               const SizedBox(height: 5),
               Text(
                 widget.title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: DarkColors.textMuted,
+                  color: AppColors.textMuted(context),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -284,6 +384,7 @@ class _StatCardState extends State<StatCard> {
   }
 }
 
+// ── EmptyState ──────────────────────────────────────────────────
 class EmptyState extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -311,22 +412,24 @@ class EmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: DarkColors.accent.withValues(alpha: 0.08),
+                color: AppColors.accent.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 48, color: DarkColors.accent),
+              child:
+                  Icon(icon, size: 48, color: AppColors.accent),
             ),
             const SizedBox(height: 20),
             Text(title,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
-                    color: DarkColors.textPrimary),
+                    color: AppColors.textPrimary(context)),
                 textAlign: TextAlign.center),
             const SizedBox(height: 6),
             Text(subtitle,
-                style: const TextStyle(
-                    fontSize: 13, color: DarkColors.textSecondary),
+                style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary(context)),
                 textAlign: TextAlign.center),
             if (buttonLabel != null && onButtonPressed != null) ...[
               const SizedBox(height: 20),
@@ -337,14 +440,15 @@ class EmptyState extends StatelessWidget {
                       horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [DarkColors.accent, DarkColors.accentEnd],
+                      colors: [AppColors.accent, AppColors.accentEnd],
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.add, color: Colors.white, size: 16),
+                      const Icon(Icons.add,
+                          color: Colors.white, size: 16),
                       const SizedBox(width: 8),
                       Text(buttonLabel!,
                           style: const TextStyle(
@@ -363,6 +467,7 @@ class EmptyState extends StatelessWidget {
   }
 }
 
+// ── AvatarInitials ──────────────────────────────────────────────
 class AvatarInitials extends StatelessWidget {
   final String name;
   final double radius;
@@ -433,6 +538,7 @@ class AvatarInitials extends StatelessWidget {
   }
 }
 
+// ── DepartmentBadge ─────────────────────────────────────────────
 class DepartmentBadge extends StatelessWidget {
   final String department;
   const DepartmentBadge({super.key, required this.department});
@@ -453,7 +559,24 @@ class DepartmentBadge extends StatelessWidget {
     return map[dept] ?? const Color(0xFF8B5CF6);
   }
 
-  Color _bg(String dept) {
+  Color _bg(String dept, BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    if (!isDark) {
+      // Light mode: soft tinted backgrounds
+      final map = {
+        'Engineering': const Color(0xFFEDE9FE),
+        'Product': const Color(0xFFEDE9FE),
+        'Design': const Color(0xFFD1FAE5),
+        'Marketing': const Color(0xFFFEF3C7),
+        'HR': const Color(0xFFFEE2E2),
+        'Finance': const Color(0xFFDBEAFE),
+        'Sales': const Color(0xFFFCE7F3),
+        'Operations': const Color(0xFFCFFAFE),
+        'Legal': const Color(0xFFEDE9FE),
+        'Customer Support': const Color(0xFFD1FAE5),
+      };
+      return map[dept] ?? const Color(0xFFEDE9FE);
+    }
     final map = {
       'Engineering': const Color(0xFF1E1040),
       'Product': const Color(0xFF1E1040),
@@ -474,7 +597,7 @@ class DepartmentBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: _bg(department),
+        color: _bg(department, context),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
             color: _color(department).withValues(alpha: 0.25)),
@@ -491,6 +614,7 @@ class DepartmentBadge extends StatelessWidget {
   }
 }
 
+// ── GradientButton ──────────────────────────────────────────────
 class GradientButton extends StatefulWidget {
   final String label;
   final IconData? icon;
@@ -524,13 +648,16 @@ class _GradientButtonState extends State<GradientButton> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: _hovered
-                  ? [const Color(0xFF8B5CF6), const Color(0xFF60A5FA)]
-                  : [DarkColors.accent, DarkColors.accentEnd],
+                  ? [
+                      const Color(0xFF8B5CF6),
+                      const Color(0xFF60A5FA)
+                    ]
+                  : [AppColors.accent, AppColors.accentEnd],
             ),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: DarkColors.accent.withValues(alpha: 0.35),
+                color: AppColors.accent.withValues(alpha: 0.35),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),

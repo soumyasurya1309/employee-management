@@ -30,31 +30,30 @@ class DepartmentsScreen extends StatelessWidget {
         final total = emp.totalCount;
 
         return Scaffold(
-          backgroundColor: DarkColors.bg,
+          backgroundColor: AppColors.bg(context),
           appBar: AppBar(
-            backgroundColor: DarkColors.bg,
+            backgroundColor: AppColors.bg(context),
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded,
-                  color: DarkColors.textMuted, size: 18),
+              icon: Icon(Icons.arrow_back_ios_rounded,
+                  color: AppColors.textMuted(context), size: 18),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text('Department Stats',
+            title: Text('Department Stats',
                 style: TextStyle(
-                    color: DarkColors.textPrimary,
+                    color: AppColors.textPrimary(context),
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
           ),
           body: deptCounts.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text('No departments yet',
                       style: TextStyle(
-                          color: DarkColors.textDisabled, fontSize: 14)),
+                          color: AppColors.textDisabled(context), fontSize: 14)),
                 )
               : ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    // Summary row
                     Row(children: [
                       Expanded(
                         child: _SummaryCard(
@@ -75,11 +74,11 @@ class DepartmentsScreen extends StatelessWidget {
                       ),
                     ]),
                     const SizedBox(height: 20),
-                    const Text('BREAKDOWN',
+                    Text('BREAKDOWN',
                         style: TextStyle(
                             fontSize: 11,
                             letterSpacing: 0.8,
-                            color: DarkColors.textDisabled)),
+                            color: AppColors.textDisabled(context))),
                     const SizedBox(height: 12),
                     ...deptCounts.entries.map((e) {
                       final color = _color(e.key);
@@ -88,12 +87,12 @@ class DepartmentsScreen extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
-                          color: DarkColors.surface,
+                          color: AppColors.surface(context),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: DarkColors.border),
+                          border: Border.all(color: AppColors.border(context)),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
+                              color: Colors.black.withValues(alpha: 0.08),
                               blurRadius: 20,
                               offset: const Offset(0, 6),
                             ),
@@ -116,10 +115,10 @@ class DepartmentsScreen extends StatelessWidget {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(e.key,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
-                                        color: DarkColors.textPrimary)),
+                                        color: AppColors.textPrimary(context))),
                               ),
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -146,7 +145,7 @@ class DepartmentsScreen extends StatelessWidget {
                                     value: pct,
                                     minHeight: 7,
                                     backgroundColor:
-                                        Colors.white.withValues(alpha: 0.06),
+                                        AppColors.border(context),
                                     valueColor:
                                         AlwaysStoppedAnimation(color),
                                   ),
@@ -189,12 +188,12 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: DarkColors.surface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DarkColors.border),
+        border: Border.all(color: AppColors.border(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 6),
           ),
@@ -214,16 +213,16 @@ class _SummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(value,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: AppColors.textPrimary(context),
                   height: 1.0)),
           const SizedBox(height: 4),
           Text(label,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF9CA3AF),
+                  color: AppColors.textMuted(context),
                   fontWeight: FontWeight.w500)),
         ],
       ),

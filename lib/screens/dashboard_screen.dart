@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/common_widgets.dart';
 import 'departments_screen.dart';
 import 'export_screen.dart';
@@ -42,24 +43,25 @@ class _DashboardScreenState extends State<DashboardScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: DarkColors.surface,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
-        title: const Text('Sign out',
+        backgroundColor: AppColors.surface(context),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('Sign out',
             style: TextStyle(
-                color: DarkColors.textPrimary, fontSize: 16)),
-        content: const Text('Are you sure you want to sign out?',
-            style: TextStyle(color: DarkColors.textMuted, fontSize: 13)),
+                color: AppColors.textPrimary(context), fontSize: 16)),
+        content: Text('Are you sure you want to sign out?',
+            style:
+                TextStyle(color: AppColors.textMuted(context), fontSize: 13)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel',
-                  style: TextStyle(color: DarkColors.textMuted))),
+              child: Text('Cancel',
+                  style: TextStyle(color: AppColors.textMuted(context)))),
           GestureDetector(
             onTap: () => Navigator.pop(context, true),
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: const Color(0xFFEF4444).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
@@ -86,24 +88,29 @@ class _DashboardScreenState extends State<DashboardScreen>
         final isWide = MediaQuery.of(context).size.width > 700;
 
         return Scaffold(
-          backgroundColor: DarkColors.bg,
+          backgroundColor: AppColors.bg(context),
           appBar: AppBar(
-            backgroundColor: DarkColors.bg,
+            backgroundColor: AppColors.bg(context),
             elevation: 0,
-            title: const Text('Dashboard',
+            title: Text('Dashboard',
                 style: TextStyle(
-                    color: DarkColors.textPrimary,
+                    color: AppColors.textPrimary(context),
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
             actions: [
+              // ── Theme toggle ──
+              ThemeToggleIconButton(
+                onToggle: () =>
+                    context.read<ThemeProvider>().toggle(),
+              ),
               IconButton(
-                icon: const Icon(Icons.notifications_outlined,
-                    color: DarkColors.textMuted, size: 22),
+                icon: Icon(Icons.notifications_outlined,
+                    color: AppColors.textMuted(context), size: 22),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.logout_rounded,
-                    color: DarkColors.textMuted, size: 20),
+                icon: Icon(Icons.logout_rounded,
+                    color: AppColors.textMuted(context), size: 20),
                 onPressed: _confirmLogout,
               ),
             ],
@@ -113,14 +120,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                 Navigator.pushNamed(context, '/employees/add'),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14)),
-            backgroundColor: DarkColors.accent,
+            backgroundColor: AppColors.accent,
             child: const Icon(Icons.add, color: Colors.white),
           ),
           body: FadeTransition(
             opacity: _fadeAnim,
             child: RefreshIndicator(
-              color: DarkColors.accent,
-              backgroundColor: DarkColors.surface,
+              color: AppColors.accent,
+              backgroundColor: AppColors.surface(context),
               onRefresh: () async =>
                   context.read<EmployeeProvider>().startListening(),
               child: SingleChildScrollView(
@@ -133,11 +140,11 @@ class _DashboardScreenState extends State<DashboardScreen>
                         username:
                             auth.user?.email?.split('@').first ?? 'Admin'),
                     const SizedBox(height: 20),
-                    const Text('OVERVIEW',
+                    Text('OVERVIEW',
                         style: TextStyle(
                             fontSize: 11,
                             letterSpacing: 0.8,
-                            color: DarkColors.textDisabled)),
+                            color: AppColors.textDisabled(context))),
                     const SizedBox(height: 10),
                     isWide
                         ? Row(children: [
@@ -154,13 +161,12 @@ class _DashboardScreenState extends State<DashboardScreen>
                             Expanded(
                                 child: _KpiCard(
                               title: 'Departments',
-                              value: emp.departmentCounts.length.toString(),
+                              value:
+                                  emp.departmentCounts.length.toString(),
                               icon: Icons.business_rounded,
                               color: const Color(0xFF10B981),
-                              onTap: () => Navigator.push(
-                                context,
-                                _SmoothRoute(page: const DepartmentsScreen()),
-                              ),
+                              onTap: () => Navigator.push(context,
+                                  _SmoothRoute(page: const DepartmentsScreen())),
                             )),
                             const SizedBox(width: 10),
                             Expanded(
@@ -181,10 +187,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                                   : '\$${(emp.totalSalary / 1000).toStringAsFixed(0)}k',
                               icon: Icons.account_balance_wallet_rounded,
                               color: const Color(0xFFEF4444),
-                              onTap: () => Navigator.push(
-                                context,
-                                _SmoothRoute(page: const PayrollScreen()),
-                              ),
+                              onTap: () => Navigator.push(context,
+                                  _SmoothRoute(page: const PayrollScreen())),
                             )),
                           ])
                         : Column(children: [
@@ -202,14 +206,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                               Expanded(
                                   child: _KpiCard(
                                 title: 'Departments',
-                                value:
-                                    emp.departmentCounts.length.toString(),
+                                value: emp.departmentCounts.length
+                                    .toString(),
                                 icon: Icons.business_rounded,
                                 color: const Color(0xFF10B981),
                                 onTap: () => Navigator.push(
-                                  context,
-                                  _SmoothRoute(page: const DepartmentsScreen()),
-                                ),
+                                    context,
+                                    _SmoothRoute(
+                                        page: const DepartmentsScreen())),
                               )),
                             ]),
                             const SizedBox(height: 10),
@@ -233,9 +237,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 icon: Icons.account_balance_wallet_rounded,
                                 color: const Color(0xFFEF4444),
                                 onTap: () => Navigator.push(
-                                  context,
-                                  _SmoothRoute(page: const PayrollScreen()),
-                                ),
+                                    context,
+                                    _SmoothRoute(
+                                        page: const PayrollScreen())),
                               )),
                             ]),
                           ]),
@@ -322,8 +326,8 @@ class _HeroCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 const Text(
                   'Manage your organization efficiently and monitor workforce insights.',
-                  style: TextStyle(
-                      fontSize: 12, color: Color(0xFFC7D2FE)),
+                  style:
+                      TextStyle(fontSize: 12, color: Color(0xFFC7D2FE)),
                 ),
               ],
             ),
@@ -387,8 +391,11 @@ class _KpiCardState extends State<_KpiCard> {
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF18213F), Color(0xFF121B36)],
+            gradient: LinearGradient(
+              colors: [
+                AppColors.cardGradientStart(context),
+                AppColors.cardGradientEnd(context),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -396,11 +403,11 @@ class _KpiCardState extends State<_KpiCard> {
             border: Border.all(
               color: _hovered
                   ? widget.color.withValues(alpha: 0.35)
-                  : Colors.white.withValues(alpha: 0.08),
+                  : AppColors.border(context),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.18),
+                color: Colors.black.withValues(alpha: 0.08),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
@@ -423,21 +430,22 @@ class _KpiCardState extends State<_KpiCard> {
                   color: widget.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(widget.icon, color: widget.color, size: 20),
+                child:
+                    Icon(widget.icon, color: widget.color, size: 20),
               ),
               const SizedBox(height: 14),
               Text(widget.value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: AppColors.textPrimary(context),
                     height: 1.0,
                   )),
               const SizedBox(height: 5),
               Text(widget.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Color(0xFF9CA3AF),
+                    color: AppColors.textMuted(context),
                     fontWeight: FontWeight.w500,
                   )),
             ],
@@ -476,12 +484,12 @@ class _DeptPerformanceCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DarkColors.surface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DarkColors.border),
+        border: Border.all(color: AppColors.border(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),
@@ -491,7 +499,7 @@ class _DeptPerformanceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -499,26 +507,29 @@ class _DeptPerformanceCard extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: DarkColors.textPrimary)),
-                  SizedBox(height: 2),
+                          color: AppColors.textPrimary(context))),
+                  const SizedBox(height: 2),
                   Text('Workforce distribution by department',
                       style: TextStyle(
-                          fontSize: 12, color: DarkColors.textDisabled)),
+                          fontSize: 12,
+                          color: AppColors.textDisabled(context))),
                 ],
               ),
             ),
-            const Text('This month',
+            Text('This month',
                 style: TextStyle(
-                    fontSize: 11, color: DarkColors.textDisabled)),
+                    fontSize: 11,
+                    color: AppColors.textDisabled(context))),
           ]),
           const SizedBox(height: 20),
           if (deptCounts.isEmpty)
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Text('No departments yet',
                     style: TextStyle(
-                        color: DarkColors.textDisabled, fontSize: 13)),
+                        color: AppColors.textDisabled(context),
+                        fontSize: 13)),
               ),
             )
           else
@@ -560,11 +571,13 @@ class _DeptRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
               child: Text(name,
-                  style: const TextStyle(
-                      fontSize: 13, color: DarkColors.textSecondary))),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary(context)))),
           Text('$count employees',
-              style: const TextStyle(
-                  fontSize: 11, color: DarkColors.textDisabled)),
+              style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textDisabled(context))),
           const SizedBox(width: 8),
           Text('${(pct * 100).toStringAsFixed(0)}%',
               style: TextStyle(
@@ -578,7 +591,7 @@ class _DeptRow extends StatelessWidget {
           child: LinearProgressIndicator(
             value: pct,
             minHeight: 6,
-            backgroundColor: Colors.white.withValues(alpha: 0.06),
+            backgroundColor: AppColors.border(context),
             valueColor: AlwaysStoppedAnimation(color),
           ),
         ),
@@ -596,12 +609,12 @@ class _QuickActionsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DarkColors.surface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DarkColors.border),
+        border: Border.all(color: AppColors.border(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),
@@ -610,22 +623,23 @@ class _QuickActionsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Quick Actions',
+          Text('Quick Actions',
               style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: DarkColors.textPrimary)),
+                  color: AppColors.textPrimary(context))),
           const SizedBox(height: 4),
-          const Text('Common tasks',
+          Text('Common tasks',
               style: TextStyle(
-                  fontSize: 12, color: DarkColors.textDisabled)),
+                  fontSize: 12, color: AppColors.textDisabled(context))),
           const SizedBox(height: 16),
           _ActionBtn(
             icon: Icons.person_add_alt_1_rounded,
             label: 'Add Employee',
             color: const Color(0xFF8B5CF6),
             bg: const Color(0xFF7C3AED),
-            onTap: () => Navigator.pushNamed(context, '/employees/add'),
+            onTap: () =>
+                Navigator.pushNamed(context, '/employees/add'),
           ),
           const SizedBox(height: 8),
           _ActionBtn(
@@ -641,10 +655,8 @@ class _QuickActionsCard extends StatelessWidget {
             label: 'Department Stats',
             color: const Color(0xFF10B981),
             bg: const Color(0xFF10B981),
-            onTap: () => Navigator.push(
-              context,
-              _SmoothRoute(page: const DepartmentsScreen()),
-            ),
+            onTap: () => Navigator.push(context,
+                _SmoothRoute(page: const DepartmentsScreen())),
           ),
           const SizedBox(height: 8),
           _ActionBtn(
@@ -653,9 +665,7 @@ class _QuickActionsCard extends StatelessWidget {
             color: const Color(0xFFF59E0B),
             bg: const Color(0xFFF59E0B),
             onTap: () => Navigator.push(
-              context,
-              _SmoothRoute(page: const ExportScreen()),
-            ),
+                context, _SmoothRoute(page: const ExportScreen())),
           ),
         ],
       ),
@@ -766,12 +776,12 @@ class _RecentActivityCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DarkColors.surface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DarkColors.border),
+        border: Border.all(color: AppColors.border(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),
@@ -780,7 +790,7 @@ class _RecentActivityCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(children: [
+          Row(children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -789,17 +799,19 @@ class _RecentActivityCard extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: DarkColors.textPrimary)),
-                  SizedBox(height: 2),
+                          color: AppColors.textPrimary(context))),
+                  const SizedBox(height: 2),
                   Text('Latest actions in your system',
                       style: TextStyle(
-                          fontSize: 12, color: DarkColors.textDisabled)),
+                          fontSize: 12,
+                          color: AppColors.textDisabled(context))),
                 ],
               ),
             ),
             Text('Last 24 hours',
                 style: TextStyle(
-                    fontSize: 11, color: DarkColors.textDisabled)),
+                    fontSize: 11,
+                    color: AppColors.textDisabled(context))),
           ]),
           const SizedBox(height: 16),
           ..._activities.asMap().entries.map((entry) {
@@ -811,7 +823,8 @@ class _RecentActivityCard extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: (a['color'] as Color).withValues(alpha: 0.15),
+                    color:
+                        (a['color'] as Color).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(a['icon'] as IconData,
@@ -820,12 +833,13 @@ class _RecentActivityCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                     child: Text(a['title'] as String,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 13,
-                            color: DarkColors.textSecondary))),
+                            color: AppColors.textSecondary(context)))),
                 Text(a['time'] as String,
-                    style: const TextStyle(
-                        fontSize: 11, color: DarkColors.textDisabled)),
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textDisabled(context))),
               ]),
               if (i < _activities.length - 1)
                 Padding(
@@ -835,7 +849,7 @@ class _RecentActivityCard extends StatelessWidget {
                     Container(
                         width: 1,
                         height: 14,
-                        color: Colors.white.withValues(alpha: 0.06)),
+                        color: AppColors.border(context)),
                   ]),
                 ),
             ]);

@@ -5,7 +5,6 @@ import '../providers/auth_provider.dart';
 import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
 
-// ── Forgot Password ──────────────────────────────────────────────────────────
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -49,11 +48,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         return LoadingOverlay(
           isLoading: auth.status == AuthStatus.loading,
           child: Scaffold(
-            backgroundColor: AppTheme.surfaceColor,
+            backgroundColor: AppColors.bg(context),
             appBar: AppBar(
               title: const Text('Forgot Password'),
               backgroundColor: Colors.transparent,
-              foregroundColor: const Color(0xFF212529),
+              foregroundColor: AppColors.textPrimary(context),
               elevation: 0,
             ),
             body: Padding(
@@ -76,29 +75,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.08),
+              color: AppColors.accent.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.lock_reset_rounded,
               size: 64,
-              color: AppTheme.primaryColor,
+              color: AppColors.accent,
             ),
           ),
           const SizedBox(height: 32),
-          const Text(
+          Text(
             'Reset Password',
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF212529),
+              color: AppColors.textPrimary(context),
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Enter your email and we\'ll send you a link to reset your password.',
-            style: TextStyle(fontSize: 14, color: Color(0xFF6C757D)),
+            style: TextStyle(fontSize: 14, color: AppColors.textMuted(context)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -125,20 +124,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Icon(Icons.mark_email_read_outlined,
-            size: 80, color: AppTheme.secondaryColor),
+        Icon(Icons.mark_email_read_outlined,
+            size: 80, color: AppColors.accentLight),
         const SizedBox(height: 24),
-        const Text(
+        Text(
           'Check Your Email',
           style: TextStyle(
-              fontSize: 26, fontWeight: FontWeight.w700, color: Color(0xFF212529)),
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary(context)),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
         Text(
           'We\'ve sent a password reset link to\n${_emailController.text.trim()}',
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 14, color: Color(0xFF6C757D)),
+          style: TextStyle(fontSize: 14, color: AppColors.textMuted(context)),
         ),
         const SizedBox(height: 32),
         ElevatedButton(
@@ -182,8 +183,8 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
   void _sendOtp() {
     if (_phoneController.text.trim().length != 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter a valid 10-digit phone number'),
+        SnackBar(
+          content: const Text('Enter a valid 10-digit phone number'),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -191,9 +192,9 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
     }
     setState(() => _codeSent = true);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Demo OTP sent: 123456'),
-        backgroundColor: AppTheme.secondaryColor,
+      SnackBar(
+        content: const Text('Demo OTP sent: 123456'),
+        backgroundColor: AppColors.accentLight,
       ),
     );
   }
@@ -202,8 +203,8 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
     final otp = _controllers.map((c) => c.text).join();
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter the complete 6-digit OTP'),
+        SnackBar(
+          content: const Text('Please enter the complete 6-digit OTP'),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -216,16 +217,17 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
 
     if (otp == _demoOtp) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP verified! (Demo mode — logging in requires email/password)'),
-          backgroundColor: AppTheme.secondaryColor,
+        SnackBar(
+          content: const Text(
+              'OTP verified! (Demo mode — logging in requires email/password)'),
+          backgroundColor: AppColors.accentLight,
         ),
       );
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Incorrect OTP. Try: 123456'),
+        SnackBar(
+          content: const Text('Incorrect OTP. Try: 123456'),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -237,11 +239,11 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
     return LoadingOverlay(
       isLoading: _isVerifying,
       child: Scaffold(
-        backgroundColor: AppTheme.surfaceColor,
+        backgroundColor: AppColors.bg(context),
         appBar: AppBar(
           title: const Text('OTP Verification (Demo)'),
           backgroundColor: Colors.transparent,
-          foregroundColor: const Color(0xFF212529),
+          foregroundColor: AppColors.textPrimary(context),
           elevation: 0,
         ),
         body: Padding(
@@ -251,12 +253,14 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
             children: [
               const SizedBox(height: 24),
               const Icon(Icons.phone_android_rounded,
-                  size: 64, color: AppTheme.primaryColor),
+                  size: 64, color: AppColors.accent),
               const SizedBox(height: 16),
               Text(
                 _codeSent ? 'Enter Verification Code' : 'Enter Phone Number',
-                style: const TextStyle(
-                    fontSize: 22, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary(context)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
@@ -265,7 +269,7 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
                     ? 'We\'ve sent a 6-digit code to your phone.\n(Demo OTP: 123456)'
                     : 'We\'ll send a verification code to this number',
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Color(0xFF6C757D)),
+                style: TextStyle(color: AppColors.textMuted(context)),
               ),
               const SizedBox(height: 32),
               if (!_codeSent) ...[
@@ -323,8 +327,7 @@ class _OtpDemoScreenState extends State<OtpDemoScreen> {
           contentPadding: const EdgeInsets.symmetric(vertical: 14),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        style:
-            const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
         onChanged: (value) {
           if (value.isNotEmpty && index < 5) {
             _focusNodes[index + 1].requestFocus();

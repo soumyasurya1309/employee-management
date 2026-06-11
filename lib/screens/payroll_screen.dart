@@ -14,31 +14,31 @@ class PayrollScreen extends StatelessWidget {
         final totalSalary = emp.totalSalary;
 
         return Scaffold(
-          backgroundColor: DarkColors.bg,
+          backgroundColor: AppColors.bg(context),
           appBar: AppBar(
-            backgroundColor: DarkColors.bg,
+            backgroundColor: AppColors.bg(context),
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded,
-                  color: DarkColors.textMuted, size: 18),
+              icon: Icon(Icons.arrow_back_ios_rounded,
+                  color: AppColors.textMuted(context), size: 18),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text('Total Payroll',
+            title: Text('Total Payroll',
                 style: TextStyle(
-                    color: DarkColors.textPrimary,
+                    color: AppColors.textPrimary(context),
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
           ),
           body: employees.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text('No employees found',
                       style: TextStyle(
-                          color: DarkColors.textDisabled, fontSize: 14)),
+                          color: AppColors.textDisabled(context), fontSize: 14)),
                 )
               : ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    // Total banner
+                    // Total banner — gradient always looks good on both themes
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
@@ -82,26 +82,25 @@ class PayrollScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text('EMPLOYEES',
+                    Text('EMPLOYEES',
                         style: TextStyle(
                             fontSize: 11,
                             letterSpacing: 0.8,
-                            color: DarkColors.textDisabled)),
+                            color: AppColors.textDisabled(context))),
                     const SizedBox(height: 12),
                     ...employees.map((e) {
-                      // FIX: joiningDate is non-nullable — removed unnecessary null check
                       final joining =
                           '${e.joiningDate.day}/${e.joiningDate.month}/${e.joiningDate.year}';
                       return Container(
                         margin: const EdgeInsets.only(bottom: 10),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: DarkColors.surface,
+                          color: AppColors.surface(context),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: DarkColors.border),
+                          border: Border.all(color: AppColors.border(context)),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.12),
+                              color: Colors.black.withValues(alpha: 0.06),
                               blurRadius: 16,
                               offset: const Offset(0, 4),
                             ),
@@ -133,32 +132,31 @@ class PayrollScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(e.name,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: DarkColors.textPrimary)),
+                                        color: AppColors.textPrimary(context))),
                                 const SizedBox(height: 3),
                                 Row(children: [
-                                  const Icon(Icons.calendar_today_rounded,
+                                  Icon(Icons.calendar_today_rounded,
                                       size: 11,
-                                      color: DarkColors.textDisabled),
+                                      color: AppColors.textDisabled(context)),
                                   const SizedBox(width: 4),
                                   Text('Joined $joining',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 11,
-                                          color: DarkColors.textDisabled)),
+                                          color: AppColors.textDisabled(context))),
                                   const SizedBox(width: 10),
-                                  const Icon(Icons.business_rounded,
+                                  Icon(Icons.business_rounded,
                                       size: 11,
-                                      color: DarkColors.textDisabled),
+                                      color: AppColors.textDisabled(context)),
                                   const SizedBox(width: 4),
                                   Flexible(
                                     child: Text(
-                                      // FIX: department is non-nullable — removed ?? 'N/A'
                                       e.department,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 11,
-                                          color: DarkColors.textDisabled),
+                                          color: AppColors.textDisabled(context)),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -177,10 +175,10 @@ class PayrollScreen extends StatelessWidget {
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFFEF4444)),
                               ),
-                              const Text('/ month',
+                              Text('/ month',
                                   style: TextStyle(
                                       fontSize: 10,
-                                      color: DarkColors.textDisabled)),
+                                      color: AppColors.textDisabled(context))),
                             ],
                           ),
                         ]),

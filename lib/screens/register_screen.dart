@@ -55,11 +55,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return LoadingOverlay(
           isLoading: auth.status == AuthStatus.loading,
           child: Scaffold(
-            backgroundColor: AppTheme.surfaceColor,
+            backgroundColor: AppColors.bg(context),
             appBar: AppBar(
               title: const Text('Create Account'),
               backgroundColor: Colors.transparent,
-              foregroundColor: const Color(0xFF212529),
+              foregroundColor: AppColors.textPrimary(context),
               elevation: 0,
             ),
             body: SafeArea(
@@ -70,19 +70,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
+                      Text(
                         'Join EmpManager',
                         style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF212529),
+                          color: AppColors.textPrimary(context),
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'Create your admin account to get started',
-                        style:
-                            TextStyle(fontSize: 14, color: Color(0xFF6C757D)),
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textMuted(context)),
                       ),
                       const SizedBox(height: 32),
                       AppTextField(
@@ -143,9 +144,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
+                          Text(
                             'Already have an account? ',
-                            style: TextStyle(color: Color(0xFF6C757D)),
+                            style: TextStyle(
+                                color: AppColors.textMuted(context)),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(context),
