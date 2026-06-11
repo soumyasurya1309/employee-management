@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
 import '../widgets/common_widgets.dart';
+import 'departments_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -154,6 +155,12 @@ class _DashboardScreenState extends State<DashboardScreen>
                               value: emp.departmentCounts.length.toString(),
                               icon: Icons.business_rounded,
                               color: const Color(0xFF10B981),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        const DepartmentsScreen()),
+                              ),
                             )),
                             const SizedBox(width: 10),
                             Expanded(
@@ -195,6 +202,12 @@ class _DashboardScreenState extends State<DashboardScreen>
                                     emp.departmentCounts.length.toString(),
                                 icon: Icons.business_rounded,
                                 color: const Color(0xFF10B981),
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          const DepartmentsScreen()),
+                                ),
                               )),
                             ]),
                             const SizedBox(height: 10),
@@ -404,8 +417,7 @@ class _KpiCardState extends State<_KpiCard> {
                   color: widget.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child:
-                    Icon(widget.icon, color: widget.color, size: 20),
+                child: Icon(widget.icon, color: widget.color, size: 20),
               ),
               const SizedBox(height: 14),
               Text(widget.value,
@@ -623,7 +635,11 @@ class _QuickActionsCard extends StatelessWidget {
             label: 'Department Stats',
             color: const Color(0xFF10B981),
             bg: const Color(0xFF10B981),
-            onTap: () => Navigator.pushNamed(context, '/employees'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const DepartmentsScreen()),
+            ),
           ),
           const SizedBox(height: 8),
           _ActionBtn(
