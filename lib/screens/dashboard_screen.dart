@@ -158,9 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                               color: const Color(0xFF10B981),
                               onTap: () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (_) =>
-                                        const DepartmentsScreen()),
+                                _SmoothRoute(page: const DepartmentsScreen()),
                               ),
                             )),
                             const SizedBox(width: 10),
@@ -184,8 +182,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                               color: const Color(0xFFEF4444),
                               onTap: () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (_) => const PayrollScreen()),
+                                _SmoothRoute(page: const PayrollScreen()),
                               ),
                             )),
                           ])
@@ -210,9 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 color: const Color(0xFF10B981),
                                 onTap: () => Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (_) =>
-                                          const DepartmentsScreen()),
+                                  _SmoothRoute(page: const DepartmentsScreen()),
                                 ),
                               )),
                             ]),
@@ -238,8 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 color: const Color(0xFFEF4444),
                                 onTap: () => Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (_) => const PayrollScreen()),
+                                  _SmoothRoute(page: const PayrollScreen()),
                                 ),
                               )),
                             ]),
@@ -648,8 +642,7 @@ class _QuickActionsCard extends StatelessWidget {
             bg: const Color(0xFF10B981),
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (_) => const DepartmentsScreen()),
+              _SmoothRoute(page: const DepartmentsScreen()),
             ),
           ),
           const SizedBox(height: 8),
@@ -847,4 +840,24 @@ class _RecentActivityCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// ── Smooth Page Transition ────────────────────────────────────────────────────
+class _SmoothRoute extends PageRouteBuilder {
+  final Widget page;
+  _SmoothRoute({required this.page})
+      : super(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              ),
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 300),
+        );
 }

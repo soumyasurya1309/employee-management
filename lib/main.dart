@@ -47,16 +47,36 @@ class EmployeeManagementApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       scaffoldMessengerKey: NotificationService.messengerKey,
       initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/forgot-password': (context) => const ForgotPasswordScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/employees': (context) => const EmployeeListScreen(),
-        '/employees/add': (context) => const AddEditEmployeeScreen(),
-        '/employees/edit': (context) => const AddEditEmployeeScreen(),
-        '/employees/detail': (context) => const EmployeeDetailScreen(),
+      onGenerateRoute: (settings) {
+        final routes = {
+          '/': (context) => const SplashScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/register': (context) => const RegisterScreen(),
+          '/forgot-password': (context) => const ForgotPasswordScreen(),
+          '/dashboard': (context) => const DashboardScreen(),
+          '/employees': (context) => const EmployeeListScreen(),
+          '/employees/add': (context) => const AddEditEmployeeScreen(),
+          '/employees/edit': (context) => const AddEditEmployeeScreen(),
+          '/employees/detail': (context) => const EmployeeDetailScreen(),
+        };
+        final builder = routes[settings.name];
+        if (builder == null) return null;
+        return PageRouteBuilder(
+          settings: settings,
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              builder(context),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              ),
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 300),
+        );
       },
     );
   }
