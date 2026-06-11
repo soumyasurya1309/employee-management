@@ -89,9 +89,9 @@ class PayrollScreen extends StatelessWidget {
                             color: DarkColors.textDisabled)),
                     const SizedBox(height: 12),
                     ...employees.map((e) {
-                      final joining = e.joiningDate != null
-                          ? '${e.joiningDate!.day}/${e.joiningDate!.month}/${e.joiningDate!.year}'
-                          : 'N/A';
+                      // FIX: joiningDate is non-nullable — removed unnecessary null check
+                      final joining =
+                          '${e.joiningDate.day}/${e.joiningDate.month}/${e.joiningDate.year}';
                       return Container(
                         margin: const EdgeInsets.only(bottom: 10),
                         padding: const EdgeInsets.all(16),
@@ -117,9 +117,9 @@ class PayrollScreen extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                (e.name.isNotEmpty
+                                e.name.isNotEmpty
                                     ? e.name[0].toUpperCase()
-                                    : '?'),
+                                    : '?',
                                 style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
@@ -154,7 +154,8 @@ class PayrollScreen extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Flexible(
                                     child: Text(
-                                      e.department ?? 'N/A',
+                                      // FIX: department is non-nullable — removed ?? 'N/A'
+                                      e.department,
                                       style: const TextStyle(
                                           fontSize: 11,
                                           color: DarkColors.textDisabled),

@@ -4,6 +4,7 @@ import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
 import '../widgets/common_widgets.dart';
 import 'departments_screen.dart';
+import 'export_screen.dart';
 import 'payroll_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -651,7 +652,10 @@ class _QuickActionsCard extends StatelessWidget {
             label: 'Export Reports',
             color: const Color(0xFFF59E0B),
             bg: const Color(0xFFF59E0B),
-            onTap: () {},
+            onTap: () => Navigator.push(
+              context,
+              _SmoothRoute(page: const ExportScreen()),
+            ),
           ),
         ],
       ),
