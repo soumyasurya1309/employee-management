@@ -17,6 +17,7 @@ import 'screens/splash_screen.dart';
 import 'services/notification_service.dart';
 import 'utils/app_theme.dart';
 import 'screens/qr_scanner_screen.dart';
+import 'providers/chat_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,6 +33,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: const EmployeeManagementApp(),
     ),

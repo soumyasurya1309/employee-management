@@ -7,6 +7,7 @@ import '../widgets/common_widgets.dart';
 import 'departments_screen.dart';
 import 'export_screen.dart';
 import 'payroll_screen.dart';
+import 'chat_list_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -137,9 +138,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                 },
               ),
               IconButton(
-                icon: Icon(Icons.notifications_outlined,
+                icon: Icon(Icons.chat_bubble_outline_rounded,
                     color: AppColors.textMuted(context), size: 22),
-                onPressed: () {},
+                onPressed: () => Navigator.push(
+                    context, _SmoothRoute(page: const ChatListScreen())),
               ),
               IconButton(
                 icon: Icon(Icons.logout_rounded,
@@ -708,23 +710,6 @@ class _QuickActionsCard extends StatelessWidget {
   }
 }
 
-class _ActionBtn extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final Color bg;
-  final VoidCallback onTap;
-  const _ActionBtn(
-      {required this.icon,
-      required this.label,
-      required this.color,
-      required this.bg,
-      required this.onTap});
-
-  @override
-  State<_ActionBtn> createState() => _ActionBtnState();
-}
-
 class _ActionBtnState extends State<_ActionBtn> {
   bool _hovered = false;
 
@@ -767,6 +752,23 @@ class _ActionBtnState extends State<_ActionBtn> {
       ),
     );
   }
+}
+
+class _ActionBtn extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color bg;
+  final VoidCallback onTap;
+  const _ActionBtn(
+      {required this.icon,
+      required this.label,
+      required this.color,
+      required this.bg,
+      required this.onTap});
+
+  @override
+  State<_ActionBtn> createState() => _ActionBtnState();
 }
 
 // ── Smooth Page Transition ────────────────────────────────────────────────────
