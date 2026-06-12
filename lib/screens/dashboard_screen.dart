@@ -49,13 +49,14 @@ class _DashboardScreenState extends State<DashboardScreen>
             style: TextStyle(
                 color: AppColors.textPrimary(context), fontSize: 16)),
         content: Text('Are you sure you want to sign out?',
-            style:
-                TextStyle(color: AppColors.textMuted(context), fontSize: 13)),
+            style: TextStyle(
+                color: AppColors.textMuted(context), fontSize: 13)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text('Cancel',
-                  style: TextStyle(color: AppColors.textMuted(context)))),
+                  style:
+                      TextStyle(color: AppColors.textMuted(context)))),
           GestureDetector(
             onTap: () => Navigator.pop(context, true),
             child: Container(
@@ -66,7 +67,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text('Sign out',
-                  style: TextStyle(color: Color(0xFFEF4444), fontSize: 13)),
+                  style:
+                      TextStyle(color: Color(0xFFEF4444), fontSize: 13)),
             ),
           ),
         ],
@@ -84,6 +86,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     return Consumer2<AuthProvider, EmployeeProvider>(
       builder: (context, auth, emp, _) {
         final isWide = MediaQuery.of(context).size.width > 700;
+        final themeProvider = context.watch<ThemeProvider>();
+
         return Scaffold(
           backgroundColor: AppColors.bg(context),
           appBar: AppBar(
@@ -95,8 +99,42 @@ class _DashboardScreenState extends State<DashboardScreen>
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
             actions: [
-              ThemeToggleIconButton(
-                onToggle: () => context.read<ThemeProvider>().toggle(),
+              // ── Theme Toggle ──
+              IconButton(
+                tooltip: themeProvider.isManual
+                    ? 'Manual (long press to reset to Auto)'
+                    : 'Auto (follows device)',
+                icon: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, anim) => RotationTransition(
+                    turns: Tween(begin: 0.75, end: 1.0).animate(anim),
+                    child: child,
+                  ),
+                  child: Icon(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Icons.light_mode_rounded
+                        : Icons.dark_mode_rounded,
+                    key: ValueKey(Theme.of(context).brightness),
+                    color: AppColors.textMuted(context),
+                    size: 20,
+                  ),
+                ),
+                onPressed: () =>
+                    context.read<ThemeProvider>().toggle(context),
+                onLongPress: () {
+                  context.read<ThemeProvider>().resetToAuto();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                          'Theme reset to Auto (follows device)'),
+                      backgroundColor: AppColors.accent,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
               ),
               IconButton(
                 icon: Icon(Icons.notifications_outlined,
@@ -111,7 +149,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => Navigator.pushNamed(context, '/employees/add'),
+            onPressed: () =>
+                Navigator.pushNamed(context, '/employees/add'),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14)),
             backgroundColor: AppColors.accent,
@@ -155,11 +194,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                             Expanded(
                                 child: _KpiCard(
                               title: 'Departments',
-                              value: emp.departmentCounts.length.toString(),
+                              value:
+                                  emp.departmentCounts.length.toString(),
                               icon: Icons.business_rounded,
                               color: const Color(0xFF10B981),
-                              onTap: () => Navigator.push(context,
-                                  _SmoothRoute(page: const DepartmentsScreen())),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  _SmoothRoute(
+                                      page: const DepartmentsScreen())),
                             )),
                             const SizedBox(width: 10),
                             Expanded(
@@ -180,8 +222,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                                   : '\$${(emp.totalSalary / 1000).toStringAsFixed(0)}k',
                               icon: Icons.account_balance_wallet_rounded,
                               color: const Color(0xFFEF4444),
-                              onTap: () => Navigator.push(context,
-                                  _SmoothRoute(page: const PayrollScreen())),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  _SmoothRoute(
+                                      page: const PayrollScreen())),
                             )),
                           ])
                         : Column(children: [
@@ -199,13 +243,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                               Expanded(
                                   child: _KpiCard(
                                 title: 'Departments',
-                                value: emp.departmentCounts.length.toString(),
+                                value: emp.departmentCounts.length
+                                    .toString(),
                                 icon: Icons.business_rounded,
                                 color: const Color(0xFF10B981),
                                 onTap: () => Navigator.push(
                                     context,
                                     _SmoothRoute(
-                                        page: const DepartmentsScreen())),
+                                        page:
+                                            const DepartmentsScreen())),
                               )),
                             ]),
                             const SizedBox(height: 10),
@@ -271,7 +317,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 }
 
-// ── Hero Card ────────────────────────────────────────────────────────────────
+// ── Hero Card ─────────────────────────────────────────────────────────────────
 class _HeroCard extends StatelessWidget {
   final String username;
   const _HeroCard({required this.username});
@@ -316,7 +362,8 @@ class _HeroCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 const Text(
                   'Manage your organization efficiently and monitor workforce insights.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFFC7D2FE)),
+                  style:
+                      TextStyle(fontSize: 12, color: Color(0xFFC7D2FE)),
                 ),
               ],
             ),
@@ -328,7 +375,8 @@ class _HeroCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+              border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.15)),
             ),
             child: const Icon(Icons.person_rounded,
                 color: Colors.white, size: 28),
@@ -339,7 +387,7 @@ class _HeroCard extends StatelessWidget {
   }
 }
 
-// ── KPI Card ─────────────────────────────────────────────────────────────────
+// ── KPI Card ──────────────────────────────────────────────────────────────────
 class _KpiCard extends StatefulWidget {
   final String title;
   final String value;
@@ -504,7 +552,8 @@ class _DeptPerformanceCard extends StatelessWidget {
             ),
             Text('This month',
                 style: TextStyle(
-                    fontSize: 11, color: AppColors.textDisabled(context))),
+                    fontSize: 11,
+                    color: AppColors.textDisabled(context))),
           ]),
           const SizedBox(height: 20),
           if (deptCounts.isEmpty)
@@ -561,7 +610,8 @@ class _DeptRow extends StatelessWidget {
                       color: AppColors.textSecondary(context)))),
           Text('$count employees',
               style: TextStyle(
-                  fontSize: 11, color: AppColors.textDisabled(context))),
+                  fontSize: 11,
+                  color: AppColors.textDisabled(context))),
           const SizedBox(width: 8),
           Text('${(pct * 100).toStringAsFixed(0)}%',
               style: TextStyle(
@@ -615,14 +665,16 @@ class _QuickActionsCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text('Common tasks',
               style: TextStyle(
-                  fontSize: 12, color: AppColors.textDisabled(context))),
+                  fontSize: 12,
+                  color: AppColors.textDisabled(context))),
           const SizedBox(height: 16),
           _ActionBtn(
             icon: Icons.person_add_alt_1_rounded,
             label: 'Add Employee',
             color: const Color(0xFF8B5CF6),
             bg: const Color(0xFF7C3AED),
-            onTap: () => Navigator.pushNamed(context, '/employees/add'),
+            onTap: () =>
+                Navigator.pushNamed(context, '/employees/add'),
           ),
           const SizedBox(height: 8),
           _ActionBtn(
@@ -638,8 +690,8 @@ class _QuickActionsCard extends StatelessWidget {
             label: 'Department Stats',
             color: const Color(0xFF10B981),
             bg: const Color(0xFF10B981),
-            onTap: () => Navigator.push(
-                context, _SmoothRoute(page: const DepartmentsScreen())),
+            onTap: () => Navigator.push(context,
+                _SmoothRoute(page: const DepartmentsScreen())),
           ),
           const SizedBox(height: 8),
           _ActionBtn(
@@ -686,7 +738,8 @@ class _ActionBtnState extends State<_ActionBtn> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           decoration: BoxDecoration(
             color: _hovered
                 ? widget.bg.withValues(alpha: 0.2)

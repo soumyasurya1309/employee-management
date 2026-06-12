@@ -85,9 +85,17 @@ class ThemeToggleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Read ThemeProvider mode directly so it reflects system/light/dark
+    // mode: 0=system, 1=light, 2=dark
+    final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
+
+    // Pick icon based on actual current brightness
+    final icon = isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded;
+    final tooltip = isDark ? 'Switch to Light' : 'Switch to Dark';
+
     return IconButton(
-      tooltip: isDark ? 'Switch to Light' : 'Switch to Dark',
+      tooltip: tooltip,
       icon: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (child, anim) => RotationTransition(
@@ -95,7 +103,7 @@ class ThemeToggleIconButton extends StatelessWidget {
           child: child,
         ),
         child: Icon(
-          isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+          icon,
           key: ValueKey(isDark),
           color: AppColors.textMuted(context),
           size: 20,
