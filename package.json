@@ -1,0 +1,28 @@
+{
+  "name": "flutter_emp_mgmt",
+  "version": "1.0.0",
+  "description": "A full-featured employee management app built with Flutter, Firebase Auth, Cloud Firestore, FCM, Provider, and Material 3.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soumyasurya1309/employee-management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/soumyasurya1309/employee-management/issues"
+  },
+  "homepage": "https://github.com/soumyasurya1309/employee-management#readme",
+  "dependencies": {
+    "firebase-admin": "^14.0.0"
+  }
+}

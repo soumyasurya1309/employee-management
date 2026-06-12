@@ -16,7 +16,7 @@ import 'screens/register_screen.dart';
 import 'screens/splash_screen.dart';
 import 'services/notification_service.dart';
 import 'utils/app_theme.dart';
-
+import 'screens/qr_scanner_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -64,6 +64,7 @@ class EmployeeManagementApp extends StatelessWidget {
           '/employees/add': (context) => const AddEditEmployeeScreen(),
           '/employees/edit': (context) => const AddEditEmployeeScreen(),
           '/employees/detail': (context) => const EmployeeDetailScreen(),
+          '/qr-scanner': (context) => const QrScannerScreen(),
         };
         final builder = routes[settings.name];
         if (builder == null) return null;

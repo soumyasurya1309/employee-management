@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../models/employee.dart';
 import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
@@ -29,6 +30,8 @@ class EmployeeDetailScreen extends StatelessWidget {
                   _buildContactCard(context, employee),
                   const SizedBox(height: 10),
                   _buildJobCard(context, employee),
+                  const SizedBox(height: 10),
+                  _buildQrCard(context, employee),
                   const SizedBox(height: 10),
                   if (isAdmin) _buildActionButtons(context, employee),
                   const SizedBox(height: 24),
@@ -83,6 +86,13 @@ class EmployeeDetailScreen extends StatelessWidget {
         ),
       ),
       actions: [
+        // QR button in AppBar
+        IconButton(
+          icon: const Icon(Icons.qr_code_rounded,
+              color: AppColors.accent, size: 22),
+          tooltip: 'Show QR Code',
+          onPressed: () => _showQrDialog(context, employee),
+        ),
         if (isAdmin)
           IconButton(
             icon: const Icon(Icons.edit_outlined,
@@ -94,6 +104,179 @@ class EmployeeDetailScreen extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+
+  // ── QR Card ────────────────────────────────────────────────────
+  Widget _buildQrCard(BuildContext context, Employee employee) {
+    return GestureDetector(
+      onTap: () => _showQrDialog(context, employee),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface(context),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border(context)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: QrImageView(
+                data: _qrData(employee),
+                version: QrVersions.auto,
+                size: 56,
+                backgroundColor: Colors.transparent,
+                eyeStyle: const QrEyeStyle(
+                  eyeShape: QrEyeShape.square,
+                  color: AppColors.accent,
+                ),
+                dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.square,
+                  color: AppColors.accent,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Employee QR Code',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary(context))),
+                  const SizedBox(height: 4),
+                  Text('Tap to view full QR card',
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textMuted(context))),
+                  const SizedBox(height: 6),
+                  Text('ID: ${employee.employeeId}',
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.accent,
+                          fontWeight: FontWeight.w500)),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios_rounded,
+                size: 14, color: AppColors.textMuted(context)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── QR Data string ─────────────────────────────────────────────
+  String _qrData(Employee employee) {
+    return 'EMP:${employee.employeeId}|NAME:${employee.name}|DEPT:${employee.department}|DESG:${employee.designation}';
+  }
+
+  // ── Full QR Dialog ─────────────────────────────────────────────
+  void _showQrDialog(BuildContext context, Employee employee) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: AppColors.surface(ctx),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Employee ID Card',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary(ctx))),
+              const SizedBox(height: 4),
+              Text(employee.name,
+                  style: const TextStyle(
+                      fontSize: 13, color: AppColors.accent)),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.accent.withValues(alpha: 0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: QrImageView(
+                  data: _qrData(employee),
+                  version: QrVersions.auto,
+                  size: 200,
+                  backgroundColor: Colors.white,
+                  eyeStyle: const QrEyeStyle(
+                    eyeShape: QrEyeShape.square,
+                    color: Color(0xFF7C3AED),
+                  ),
+                  dataModuleStyle: const QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.square,
+                    color: Color(0xFF7C3AED),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Employee info below QR
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    _QrInfoRow(
+                        icon: Icons.badge_outlined,
+                        label: 'ID',
+                        value: employee.employeeId),
+                    const SizedBox(height: 6),
+                    _QrInfoRow(
+                        icon: Icons.business_outlined,
+                        label: 'Dept',
+                        value: employee.department),
+                    const SizedBox(height: 6),
+                    _QrInfoRow(
+                        icon: Icons.work_outline_rounded,
+                        label: 'Role',
+                        value: employee.designation),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  style: TextButton.styleFrom(
+                    backgroundColor:
+                        AppColors.accent.withValues(alpha: 0.1),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text('Close',
+                      style: TextStyle(
+                          color: AppColors.accent,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -183,7 +366,8 @@ class EmployeeDetailScreen extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.delete_outline, color: Color(0xFFF87171), size: 16),
+                Icon(Icons.delete_outline,
+                    color: Color(0xFFF87171), size: 16),
                 SizedBox(width: 6),
                 Text('Delete',
                     style: TextStyle(
@@ -216,7 +400,8 @@ class EmployeeDetailScreen extends StatelessWidget {
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
               child: Text('Cancel',
-                  style: TextStyle(color: AppColors.textSecondary(ctx)))),
+                  style:
+                      TextStyle(color: AppColors.textSecondary(ctx)))),
           GestureDetector(
             onTap: () => Navigator.pop(ctx, true),
             child: Container(
@@ -255,6 +440,34 @@ class EmployeeDetailScreen extends StatelessWidget {
   }
 }
 
+// ── QR Info Row ───────────────────────────────────────────────────────────────
+class _QrInfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  const _QrInfoRow(
+      {required this.icon, required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Icon(icon, size: 13, color: AppColors.accent),
+      const SizedBox(width: 6),
+      Text('$label: ',
+          style: TextStyle(
+              fontSize: 12, color: AppColors.textMuted(context))),
+      Expanded(
+        child: Text(value,
+            style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary(context))),
+      ),
+    ]);
+  }
+}
+
+// ── Section Widget ────────────────────────────────────────────────────────────
 class _Section extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -275,7 +488,8 @@ class _Section extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            const Icon(Icons.info_outline, size: 14, color: AppColors.accent),
+            const Icon(Icons.info_outline,
+                size: 14, color: AppColors.accent),
             const SizedBox(width: 6),
             Text(title,
                 style: TextStyle(
@@ -291,6 +505,7 @@ class _Section extends StatelessWidget {
   }
 }
 
+// ── Info Row ──────────────────────────────────────────────────────────────────
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
@@ -321,7 +536,8 @@ class _InfoRow extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: valueColor ?? AppColors.textPrimary(context))),
+                        color:
+                            valueColor ?? AppColors.textPrimary(context))),
               ),
             ],
           ),

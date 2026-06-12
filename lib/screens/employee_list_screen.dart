@@ -95,6 +95,14 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
             actions: [
+              // ── QR Scanner Button ──
+              IconButton(
+                icon: Icon(Icons.qr_code_scanner_rounded,
+                    color: AppColors.textMuted(context), size: 22),
+                tooltip: 'Scan Employee QR',
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/qr-scanner'),
+              ),
               if (isAdmin)
                 Container(
                   margin: const EdgeInsets.only(right: 12),
@@ -145,7 +153,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
                             icon: Icon(Icons.clear,
-                                color: AppColors.textMuted(context), size: 16),
+                                color: AppColors.textMuted(context),
+                                size: 16),
                             onPressed: () {
                               _searchController.clear();
                               provider.clearSearch();
@@ -239,10 +248,12 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                 : null,
             child: _EmpCard(
               employee: emp,
-              onTap: () => Navigator.pushNamed(context, '/employees/detail',
+              onTap: () => Navigator.pushNamed(
+                  context, '/employees/detail',
                   arguments: emp),
               onEdit: isAdmin
-                  ? () => Navigator.pushNamed(context, '/employees/edit',
+                  ? () => Navigator.pushNamed(
+                      context, '/employees/edit',
                       arguments: emp)
                   : null,
               onDelete: isAdmin ? () => _confirmDelete(emp) : null,
