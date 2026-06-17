@@ -194,19 +194,67 @@ class AppConstants {
     'Operations',
     'Legal',
     'Customer Support',
+    'Support',
+    'IT',
+    'Data',
+    'Research',
+    'Admin',
+    'Management',
+    'Business Development',
+    'Quality Assurance',
+    'DevOps',
+    'Security',
   ];
 
   static const List<String> designations = [
     'Intern',
+    'Trainee',
     'Junior Developer',
     'Developer',
     'Senior Developer',
+    'Software Engineer',
+    'Junior Software Engineer',
+    'Senior Software Engineer',
     'Lead Developer',
+    'Tech Lead',
+    'Team Lead',
+    'Principal Engineer',
+    'Staff Engineer',
+    'UI/UX Designer',
+    'Junior Designer',
+    'Senior Designer',
+    'Graphic Designer',
+    'Product Designer',
+    'QA Engineer',
+    'QA Analyst',
+    'Business Analyst',
+    'Data Analyst',
+    'Data Scientist',
+    'DevOps Engineer',
+    'Cloud Engineer',
+    'Security Engineer',
+    'Project Manager',
+    'Product Manager',
+    'Scrum Master',
     'Manager',
     'Senior Manager',
+    'Assistant Manager',
     'Director',
     'VP',
     'C-Suite',
+    'CEO',
+    'CTO',
+    'CFO',
+    'COO',
+    'HR Manager',
+    'Recruiter',
+    'Sales Executive',
+    'Account Manager',
+    'Marketing Executive',
+    'Content Writer',
+    'Technical Writer',
+    'Support Engineer',
+    'Customer Support Executive',
   ];
 }
 
@@ -265,7 +313,6 @@ String formatCurrency(double amount) {
   if (numStr.length <= 3) {
     grouped = numStr;
   } else {
-    // Last 3 digits stay together; every 2 digits before that get a comma.
     final lastThree = numStr.substring(numStr.length - 3);
     String remaining = numStr.substring(0, numStr.length - 3);
     final parts = <String>[];
@@ -299,12 +346,12 @@ String formatCurrencyCompact(double amount) {
         : cr >= 10
             ? cr.toStringAsFixed(1)
             : cr.toStringAsFixed(2);
-    return '$sign₹${_trimTrailingZeros(str)}Cr';  // fixed: was ${sign}
+    return '$sign₹${_trimTrailingZeros(str)}Cr';
   } else if (abs >= 1e5) {
     // Lakh
     final l = abs / 1e5;
     final str = l >= 10 ? l.toStringAsFixed(1) : l.toStringAsFixed(2);
-    return '$sign₹${_trimTrailingZeros(str)}L';   // fixed: was ${sign}
+    return '$sign₹${_trimTrailingZeros(str)}L';
   } else {
     return formatCurrency(amount);
   }
