@@ -46,3 +46,5 @@ app.*.map.json
 "serviceAccountKey.json.json" 
 "serviceAccountKey.json" 
 "serviceAccountKey.json" 
+"serviceAccountKey.json.json" 
+"serviceAccountKey.json" 
