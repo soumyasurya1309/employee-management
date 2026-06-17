@@ -254,6 +254,65 @@ class AppValidators {
   }
 }
 
+/// Formats [amount] using the Indian numbering system (lakh/crore commas).
+/// e.g. 1500000 → ₹15,00,000 | 65140 → ₹65,140
 String formatCurrency(double amount) {
-  return '\$${amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
+  final isNegative = amount < 0;
+  final wholePart = amount.abs().truncate();
+  final numStr = wholePart.toString();
+
+  String grouped;
+  if (numStr.length <= 3) {
+    grouped = numStr;
+  } else {
+    // Last 3 digits stay together; every 2 digits before that get a comma.
+    final lastThree = numStr.substring(numStr.length - 3);
+    String remaining = numStr.substring(0, numStr.length - 3);
+    final parts = <String>[];
+    while (remaining.length > 2) {
+      parts.insert(0, remaining.substring(remaining.length - 2));
+      remaining = remaining.substring(0, remaining.length - 2);
+    }
+    if (remaining.isNotEmpty) parts.insert(0, remaining);
+    grouped = '${parts.join(',')},$lastThree';
+  }
+  return '${isNegative ? '-' : ''}₹$grouped';
+}
+
+/// Returns a short, human-readable Indian-locale salary string suitable for
+/// KPI cards, banners, and list chips where full numbers are too long.
+///
+/// Thresholds:
+///   ≥ 1,00,00,000 (1 Cr)  → e.g. ₹1.2Cr
+///   ≥ 1,00,000    (1 L)   → e.g. ₹6.5L
+///   otherwise              → e.g. ₹45,000  (full Indian-comma format)
+String formatCurrencyCompact(double amount) {
+  final isNeg = amount < 0;
+  final abs = amount.abs();
+  final sign = isNeg ? '-' : '';
+
+  if (abs >= 1e7) {
+    // Crore
+    final cr = abs / 1e7;
+    final str = cr >= 100
+        ? cr.toStringAsFixed(0)
+        : cr >= 10
+            ? cr.toStringAsFixed(1)
+            : cr.toStringAsFixed(2);
+    return '$sign₹${_trimTrailingZeros(str)}Cr';  // fixed: was ${sign}
+  } else if (abs >= 1e5) {
+    // Lakh
+    final l = abs / 1e5;
+    final str = l >= 10 ? l.toStringAsFixed(1) : l.toStringAsFixed(2);
+    return '$sign₹${_trimTrailingZeros(str)}L';   // fixed: was ${sign}
+  } else {
+    return formatCurrency(amount);
+  }
+}
+
+String _trimTrailingZeros(String s) {
+  if (!s.contains('.')) return s;
+  s = s.replaceAll(RegExp(r'0+$'), '');
+  if (s.endsWith('.')) s = s.substring(0, s.length - 1);
+  return s;
 }
