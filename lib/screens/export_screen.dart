@@ -7,7 +7,8 @@ import 'package:excel/excel.dart' hide Border;
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../providers/employee_provider.dart';
-import '../widgets/common_widgets.dart';
+import '../utils/app_theme.dart';
+import '../widgets/common_widgets.dart' hide formatCurrency;
 
 class ExportScreen extends StatefulWidget {
   const ExportScreen({super.key});
@@ -40,10 +41,10 @@ class _ExportScreenState extends State<ExportScreen> {
             pw.Text('Total Employees: ${emp.totalCount}',
                 style: pw.TextStyle(font: font, fontSize: 12)),
             pw.Text(
-                'Total Payroll: \$${(emp.totalSalary / 1000).toStringAsFixed(1)}k',
+                'Total Payroll: ${formatCurrency(emp.totalSalary)}',
                 style: pw.TextStyle(font: font, fontSize: 12)),
             pw.Text(
-                'Avg Salary: \$${(emp.averageSalary / 1000).toStringAsFixed(1)}k',
+                'Avg Salary: ${formatCurrency(emp.averageSalary)}',
                 style: pw.TextStyle(font: font, fontSize: 12)),
             pw.SizedBox(height: 16),
             pw.TableHelper.fromTextArray(
@@ -54,7 +55,7 @@ class _ExportScreenState extends State<ExportScreen> {
                 return [
                   e.name,
                   e.department,
-                  '\$${e.salary.toStringAsFixed(0)}',
+                  formatCurrency(e.salary),
                   joining,
                 ];
               }).toList(),
@@ -108,7 +109,7 @@ class _ExportScreenState extends State<ExportScreen> {
         sheet.appendRow([
           TextCellValue(e.name),
           TextCellValue(e.department),
-          TextCellValue('\$${e.salary.toStringAsFixed(0)}'),
+          TextCellValue(formatCurrency(e.salary)),
           TextCellValue(joining),
           TextCellValue(e.email),
         ]);
@@ -196,8 +197,7 @@ class _ExportScreenState extends State<ExportScreen> {
                       const SizedBox(width: 10),
                       _StatPill(
                           label: 'Payroll',
-                          value:
-                              '\$${(emp.totalSalary / 1000).toStringAsFixed(0)}k'),
+                          value: formatCurrencyCompact(emp.totalSalary)),
                     ]),
                   ],
                 ),

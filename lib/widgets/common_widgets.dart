@@ -697,7 +697,7 @@ class _GradientButtonState extends State<GradientButton> {
 
 String formatCurrency(double amount) {
   if (amount >= 1000) {
-    return '\$${(amount / 1000).toStringAsFixed(1)}k';
+    return '₹${(amount / 1000).toStringAsFixed(1)}k';
   }
-  return '\$${amount.toStringAsFixed(0)}';
+  return '₹${amount.toStringAsFixed(0)}';
 }

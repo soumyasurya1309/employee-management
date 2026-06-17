@@ -256,12 +256,12 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                         ),
                         const SizedBox(height: 12),
                         AppTextField(
-                          label: 'Salary (USD)',
+                          label: 'Salary (₹)',
                           hint: '50000',
                           controller: _salaryController,
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
-                          prefixIcon: const Icon(Icons.attach_money_rounded),
+                          prefixIcon: const Icon(Icons.currency_rupee),
                           validator: AppValidators.validateSalary,
                         ),
                         const SizedBox(height: 12),

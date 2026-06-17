@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/employee_provider.dart';
 import '../providers/theme_provider.dart';
-import '../widgets/common_widgets.dart';
+import '../utils/app_theme.dart';
+import '../widgets/common_widgets.dart' hide formatCurrency;
 import 'departments_screen.dart';
 import 'export_screen.dart';
 import 'payroll_screen.dart';
@@ -210,8 +211,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 child: _KpiCard(
                               title: 'Avg Salary',
                               value: emp.totalCount == 0
-                                  ? '\$0'
-                                  : '\$${(emp.averageSalary / 1000).toStringAsFixed(1)}k',
+                                  ? '₹0'
+                                  : formatCurrencyCompact(emp.averageSalary),
                               icon: Icons.attach_money_rounded,
                               color: const Color(0xFFF59E0B),
                             )),
@@ -220,8 +221,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 child: _KpiCard(
                               title: 'Total Payroll',
                               value: emp.totalCount == 0
-                                  ? '\$0'
-                                  : '\$${(emp.totalSalary / 1000).toStringAsFixed(0)}k',
+                                  ? '₹0'
+                                  : formatCurrencyCompact(emp.totalSalary),
                               icon: Icons.account_balance_wallet_rounded,
                               color: const Color(0xFFEF4444),
                               onTap: () => Navigator.push(
@@ -262,8 +263,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                                   child: _KpiCard(
                                 title: 'Avg Salary',
                                 value: emp.totalCount == 0
-                                    ? '\$0'
-                                    : '\$${(emp.averageSalary / 1000).toStringAsFixed(1)}k',
+                                    ? '₹0'
+                                    : formatCurrencyCompact(emp.averageSalary),
                                 icon: Icons.attach_money_rounded,
                                 color: const Color(0xFFF59E0B),
                               )),
@@ -272,8 +273,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                                   child: _KpiCard(
                                 title: 'Total Payroll',
                                 value: emp.totalCount == 0
-                                    ? '\$0'
-                                    : '\$${(emp.totalSalary / 1000).toStringAsFixed(0)}k',
+                                    ? '₹0'
+                                    : formatCurrencyCompact(emp.totalSalary),
                                 icon: Icons.account_balance_wallet_rounded,
                                 color: const Color(0xFFEF4444),
                                 onTap: () => Navigator.push(

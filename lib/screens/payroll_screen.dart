@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/employee_provider.dart';
-import '../widgets/common_widgets.dart';
+import '../utils/app_theme.dart';
+import '../widgets/common_widgets.dart' hide formatCurrency;
 
 class PayrollScreen extends StatelessWidget {
   const PayrollScreen({super.key});
@@ -67,7 +68,7 @@ class PayrollScreen extends StatelessWidget {
                                   fontWeight: FontWeight.w500)),
                           const SizedBox(height: 6),
                           Text(
-                            '\$${(totalSalary / 1000).toStringAsFixed(1)}k',
+                            formatCurrencyCompact(totalSalary),
                             style: const TextStyle(
                                 fontSize: 36,
                                 fontWeight: FontWeight.w700,
@@ -169,7 +170,7 @@ class PayrollScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '\$${(e.salary / 1000).toStringAsFixed(1)}k',
+                                formatCurrencyCompact(e.salary),
                                 style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
